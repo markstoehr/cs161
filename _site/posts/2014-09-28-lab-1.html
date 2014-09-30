@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CS 161 Autumn 2014 - Lab 1: The Install Party</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">CS 161 Autumn 2014</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Lab 1: The Install Party</h1>
+
+            <div class="info">
+    Posted on September 28, 2014
+    
+</div>
+
+<p>The main purpose of this lab is to get you setup with Haskell so that you may begin coding and working on projects.<br /><a href="http://xkcd.com/1312/"><img src="http://imgs.xkcd.com/comics/haskell.png" style="float: right; margin: 10px;" title="The problem with Haskell is that it's a language built on lazy evaluation and nobody's actually called for it." /></a></p>
+<p>To get up and running with Haskell you can run</p>
+<pre><code>ghci</code></pre>
+<p>and try some basic commands:</p>
+<pre><code>Prelude&gt; 2 + 2
+4
+Prelude&gt; 8 ^ 10
+1073741824</code></pre>
+<p>This class will primarily focus and support development of your Haskell programs on the provided lab comptuer setup. People working with other setups is not supported but can be used to submit assignments.</p>
+<h1 id="assignment-submission">Assignment Submission</h1>
+<p>At present the <a href="http://git-scm.com/">git</a> repository for the class has not been setup yet, and we apologize for this. We will be setting this up as soon as possible. Until git is setup all submissions will be done via email. There is no submission for this lab.</p>
+<p>Submissions are due on Wednesday before midnight. A precise definition can be given in terms of time-stamps. Any submission will include a time-stamp (we will address this later) and that time-stamp must correspond to a time <em>before</em> <code>2014-mm-dd 00:00:00.0 UTC</code> where <code>mm-dd</code> corresponds to the Thursday following the lab session. This will give you approximately two days to complete the lab. You will have at hour disposal two 24-hour extensions at your disposal for the quarter. You may use them both for two labs or you may use one on two separate labs. Other extensions are generally not granted.</p>
+<h1 id="git">Git</h1>
+<p>Submissions will be done with Git</p>
+<h1 id="haskell-language-specification">Haskell Language Specification</h1>
+<p>At 329 pages the <a href="http://www.haskell.org/definition/haskell2010.pdf">language report for Haskell</a> is relatively short compared to <a href="http://psc.informatik.uni-jena.de/languages/Java/javaspec-3.pdf">Java</a> at 684 pages or <a href="http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf">C</a> 550 pages. Of course it does not approach the elegant simplicity of <a href="http://groups.csail.mit.edu/mac/ftpdir/scheme-reports/r5rs.ps">Scheme</a> which is specified in roughly 50 pages. The language report for Haskell is quite readable and making your way through a couple of chapters each week will give you a great deal more insight into the language. Looking at the <a href="http://www.haskell.org/ghc/docs/6.12.2/html/libraries/base-4.2.0.1/src/Data-List.html">code for commonly used modules</a> such as <code>Data.List</code> is also very helpful. Search for “Haskell Live Coding” on <a href="http://www.youtube.com">YouTube</a> to get a sense of how people write Haskell.<br />Taking some time to record yourself coding can also be very useful as you develop as a programmer.</p>
+<h1 id="text-editors">Text Editors</h1>
+<p>In order to develop on the GNU/Linux machines you will want to pick a good text editor. My preference is <code>emacs</code> but there are many other choices the most prominent being <code>vim</code>. There is a long history of debate about which is the better editor.</p>
+<p>Both of these editors are open source, highly configurable, have large development communities, and have a low memory foot print. They are both commonly used in Google. <a href="http://www.emacswiki.org/emacs/">Emacs</a> strength relative to vim in a Haskell development context is its support for <a href="en.wikipedia.org/wiki/Read–eval–print_loop">REPL</a> or Read-Eval-Print-Loop which allows you to execute small chunks of code at a time.</p>
+<p>Should you choose to use Emacs you will use the <code>ctrl</code> key quite often which will mean that that you will likely want to make the Caps Lock key another <code>ctrl</code> since Caps Lock is not very useful. On Mac OS you can configure your terminal preferences to “option as meta” and Keyboard Preferences to swap the option and command keys, and set Caps Lock to Control.</p>
+<p>Using Emacs takes some practice and you are well advised to use the tutorial on the welcome screen. Many Emacs users opt to configure emacs using a configuration file stored in <code>~/.emacsrc</code> which is the <a href="http://www.emacswiki.org/InitFile">Emacs Init File</a>. A list of useful Emacs commands can be found in the <a href="http://www.gnu.org/software/emacs/refcards/">reference cards here</a>.</p>
+<h1 id="basic-commands">Basic Commands</h1>
+<p>Working on the unix machines will require some familiarity with the terminal and the commands. The terminal can be accessed on Ubuntu desktop systems via <code>ctlr+alt+t</code>.</p>
+<p>A great reference for navigating the command line is <a href="http://cli.learncodethehardway.org/bash_cheat_sheet.pdf">here</a> which is based on an <a href="http://cli.learncodethehardway.org/book/">excellent command line book</a>.</p>
+<h1 id="ssh">SSH</h1>
+<p>The basic workhorse of remote sessions for GNU/Linux is <code>ssh</code>. The general usage is</p>
+<pre><code>ssh username@computername.cs.uchicago.edu</code></pre>
+<p>and then you will be prompted for a password. One way to make the connection more secure and remove the need for typing in a password each time is to use <code>ssh-keygen</code>. In your local machine run</p>
+<pre><code>mkdir ~/.ssh      # make a directory to store your ssh profile
+chmod 700 ~/.ssh  # set the permissions
+ssh-keygen -t rsa</code></pre>
+<p>(note that <code>#</code> begins a comment so everything past it is ignored) and you will create an ssh public key in <code>~/.ssh/id_rsa.pub</code> and identification in <code>~/.ssh/id_rsa</code>. Some users don’t use a passphrase but doing so always provides better security. The passphrase itself is never transmitted over the internet. You then create a copy of the authorized key on the remote computer</p>
+<pre><code>ssh-copy-id user@computername.cs.uchicago.edu</code></pre>
+<p>and then you should be able to <code>ssh</code> into any of the University of Chicago machines without entering in your password each time. More details are <a href="https://help.ubuntu.com/community/SSH/OpenSSH/Keys">here</a> and <a href="https://help.github.com/articles/generating-ssh-keys">here</a>.</p>
+<h1 id="screen">Screen</h1>
+<p><code>screen</code> is a window manager that can be used through an <code>ssh</code> tunnel. I found <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-screen-on-an-ubuntu-cloud-server">this</a> to be a reasonably good tutorial. The main point is that you may want to have several emacs sessions running concurrently in your ssh tunnel and Screen makes that possible. Open a screen session</p>
+<pre><code>screen -S cs161</code></pre>
+<p>to return to a previous screen</p>
+<pre><code>screen -r cs161</code></pre>
+<p>and to list the screens</p>
+<pre><code>screen -list</code></pre>
+<p>The linked tutorial above explains many of the key commands. The most important is <code>ctrl-a d</code> which detachs the current screen. There are also commands to open tabs, switch between them, scroll in a screen, and to customize screen using a <code>~/.screenrc</code> file. An example <code>~/.screenrc</code> file is <a href="https://gist.github.com/ChrisWills/1337178">here</a></p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
