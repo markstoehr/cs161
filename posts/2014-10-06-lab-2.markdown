@@ -1,0 +1,230 @@
+---
+title: Lab 2: Onward to Rational Strassen!
+---
+
+# Lab Submission Guidelines
+
+Before we begin lab today I will discuss some details about the expected
+project setup for submission.
+
+## Using SVN
+
+In order to submit the lab we will use `svn`.  This is an inferior and dated
+version control system that is easier to support with the systems setup the
+way they are.  In the future we will use git.  All of you should consider
+getting [a github account](http://github.com/) since it is a way of indicating your
+potential to employers while you are just starting out.
+
+An example SVN interaction will look like
+
+``` bash
+    cd
+    svn checkout student-cs161-aut-14   # get a copy of the repository -- run only once
+    cd student-cs161-aut-14
+    svn up                  # check for any updates -- in our case comments and grades
+    mkdir lab1              # make the directory for the new lab
+    svn add lab1            # start tracking lab1
+    cd lab1                 # move into the directory to begin work
+    emacs main.hs
+    svn add main.hs         # add the saved work
+    svn commit -m "began work on main.hs"     # push your work to the central server
+```
+
+## Project Layout
+
+These instructions are based [on this page from Haskell.org](http://www.haskell.org/haskellwiki/How_to_write_a_Haskell_program). We aren't going to move to
+that layout while your programs are simple but once we get passed IO
+topics in lecture we will incorporate this structure into future labs.
+
+For this project all I expect is:
+1. `lab1.hs` -- the main Haskell source code
+2. `README`  -- a text file written in [markdown](https://daringfireball.net/projects/markdown/basics) which contains your name, who (if anybody) you collaborated with (that info should also be in your source code for the specific function(s), and a brief explanation of what your code does/which problems in lab you completed.  The purpose of this is to make grading easier so that you get back more helpful comments.
+3. `LICENSE` -- the license, you don't have to include this but you are welcome to particularly if you want to develop the code into a project this can be nice to have so that other people can use your code.  I generally use a [BSD license](http://opensource.org/licenses/BSD-2-Clause).
+
+For grading the graders will add in a file
+4. `GRADING` -- will have a comment summary (possibly we will put some comments directly in the code) as well as the grade.  The grade is 0,1,2,3.  0 indicates that the project was far from completed/the code does not compile/the project was not handed in on time. 1 indicates the project was close to completion. 2 indicates the project was completed satisfactorily.  3 indicates that there was an extra credit achieved in addition to a complete project.
+
+# A note about tests
+
+During the course of this lab we are going to implement a variety
+of mathematical functions.  For each of the functions implement
+construct a variable `test[n]` where `n` is an integer defined as
+
+``` haskell
+test[n] = f [input] == [output]
+```
+
+where `[input]` is some sample input into the function and
+`[output]` is a sample output that is computed by hand.  If the
+function performs the correct computation then `test[n]` will have a value of `True` otherwise it will be `False`.  Also define a variable
+`tests` which will be defined
+
+``` haskell
+tests = test1 && test2 && test3 && ... && testn
+```
+
+which will be true if all the functions work.
+
+# Polynomials and the Fast Fourier Transform
+
+In this lab we will explore representations of polynomials and
+the algorthims to work with them.  We will be using list and
+Algebraic datatypes.  The Fast Fourier Transform is an algorithm
+that was arguably first considered by [Gauss](http://www.cis.rit.edu/class/simg716/Gauss_History_FFT.pdf) but the first real algorithm
+on computers to compute it is due to [Cooley and Tukey (1965)](http://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm).  The algorithm is certain among [the top 10 computer science algorithms of the twentieth century](https://www.siam.org/pdf/news/637.pdf). This is
+one of those algorithms that is running all the time basically
+anywhere where there are many computers (and phones!) running.
+
+The goal of this lab is to introduce you to this beautiful algorithm
+and for you to get some practice manipulating lists.  A secondary
+goal is to get you thinking about type systems and how Haskell
+syntax can represent abstract mathematical concepts.  The latter
+goal will be explored in greater detail later in the course.
+
+## Complex Numbers
+
+The natural set of numbers over which to study polynomials
+is the complex numbers.  So we begin our program with
+
+
+``` haskell
+import Data.Complex
+```
+
+the infix operator `:+` is the main thing to be concious
+of, look it up on hoogle or using the Haskell Platform.
+One of the main virtues of Haskell's implementation of Complex
+is that we can use complex integers or complex floating point
+numbers and so it is defined to be able to use type variables.
+For this lab we will not use that feature and focus on floating point
+numbers.
+
+## Polynomials
+
+1. To begin we will implement an algebraic data type `Poly`
+with type constructor `Poly`.  Use a list as the fundamental
+data structure underlying the representation.  Also implement a function `polyCoeffs` to access the chosen representation.
+
+Review the class notes if you aren't sure how to implement algebraic
+data types. One of the main uses of polynomials
+is as functions so:
+
+2. Define a function `polyEval` with the following type signature:
+
+```haskell
+polyEval :: Poly -> (Complex RealFloat) -> (Complex RealFloat)
+```
+
+   In order to work with polynomials we will want to implement
+some basic semiring operations for them:
+
+3. Implement `polyAdd` to add to polynomials.  Include the obvious type signature.  This function will likely use recursion on lists.
+
+which will have the obvious type signature and should simply add the
+polynomial coefficients.  We also need to implement multiplication.
+There are a couple of relevant multiplication functions
+
+4. `polyScalMult` is a function that takes a polynomial and a scalar that outputs a polynomial.
+
+A trickier function which should work the obvious way is polynomial multiplication:
+
+5. Implement `polyMult` to multiply polynomials. Give the obvious (and slow!) implementation of this function as well as the obvious type signature.
+
+  The next chunk
+of the lab is built around writing a faster algorithm for implementing
+polynomial multiplication.
+
+## An Alternative Parameterization
+
+It turns out that polynomials can be defined by their coefficients but
+they can be defined by sufficiently many points on the plane. Indeed,
+for a polynomial with `n` coefficents is determined by `n` points in the 
+plane.  
+
+6. Construct a new datatype `PolyPoints` which maintains two lists of x locations and y locations corresponding to the values of the polynomial, and the polynomial degree. Pick an order for the records and write a short comment justifying your choice.  Write a function `toPolyPoints` with the obvious type signature that maps  a polynomial, and a set of points to this new data type.  Use `undefined` for cases where the list of points is of insufficient length.
+
+A critical question is how to go back from `PolyPoints` to `Poly`. We will defer that question for the moment.  For the moment we want
+to have the usual algebraic rules for this alternative representation:
+
+7. Implement `polyPointsAdd`, `polyPointsScalMult`, `polyPointsMult`.
+
+## Cleverly picking the evaluation points
+
+The `toPolyPoints` function you've implemented is likely very slow
+and is $O(n^2)$.
+It turns out that there is an $O(n \operatorname{log} n)$ function for evaluating
+the points that comes from picking the points to be the
+$n$th roots of unity.  These are the complex numbers $\omega_0,\omega_1,\ldots,\omega_{n-1}$ such that 
+<center> $$\omega_i^n=1.$$  </center>
+
+By the [Fundamental Theorem of Algebra](http://en.wikipedia.org/wiki/Fundamental_theorem_of_algebra) and the [Factor Theorem](http://en.wikipedia.org/wiki/Factor_theorem) there are $n$ $n$th roots of unity. For the rest of
+the exposition we will assume that $n$ is a _dyadic_ _integer_: i.e.
+$n=2^k$ for some integer $k$.  The $n$th roots of unity are the
+set 
+<center> $$e^{2\pi i\cdot 0/n}, e^{2\pi i\cdot 1/n},\ldots, e^{2\pi i\cdot (n-1)/n}$$ </center>
+
+and we will denote the $j$th $n$th root of unit as
+<center>$$\omega_{n,j}=e^{\frac{2\pi ij}{n}}.$$</center>
+
+A useful property of these roots of unity and the crucial component
+of our algorithm is shown in the following equations:
+<center> $$ ((e^{2\pi i \frac{0}{2}})^2, (e^{2\pi i \frac{1}{2}})^2) = (1, \cos(2\pi) + i\sin(2\pi)) = (1,1) $$</center>
+
+and
+
+<center> $$ \begin{bmatrix}(e^{2\pi i \frac{0}{4}})^2 \\ (e^{2\pi i \frac{1}{4}})^2 \\ (e^{2\pi i \frac{2}{4}})^2 \\ (e^{2\pi i \frac{3}{4}})^2\end{bmatrix} = \begin{bmatrix}e^{2\pi i \frac{0}{2}} \\ e^{2\pi i \frac{1}{2}} \\ e^{2\pi i \frac{0}{2}} e^{2\pi i} \\ e^{2\pi i \frac{1}{2}} e^{2\pi i}\end{bmatrix} = \begin{bmatrix}e^{2\pi i \frac{0}{2}} \\ e^{2\pi i \frac{1}{2}} \\ e^{2\pi i \frac{0}{2}}  \\ e^{2\pi i \frac{1}{2}} \end{bmatrix} $$</center>
+
+It is a simple exercise to generalize the pattern observed above. Essentially, the square of the $n$th roots of unity gives you the $n/2$th roots of unity twice.  We will use this redundancy to construct fast
+algorithms.
+
+The next crucial observation involves decomposing polynomials into
+the even-power terms and the odd-power terms. The idea is that
+if we have a polynomial $A(x)$ defined to be
+<center> $$ A(x) = a_0 + a_1 x + a_2 x^2 +\cdots+a_{n-1}x^{n-1} $$</center>
+then we may write
+<center> $$ A(x) = A_{even}(x^2) + x A_{odd}(x^2) $$</center>
+where 
+<center> $$ A_{even}(x) = a_0 + a_2 x +\cdots+a_{n-2}x^{n/2} $$</center>
+and
+<center> $$ A_{odd}(x) = a_1 + a_3 x +\cdots+a_{n-1}x^{n/2} $$</center>.
+If you don't see this equivalence immediately, try writing down a simple
+numerical example.  The observation about the squares of roots of
+unity and this additive decomposition of polynomials forms the 
+basis for a recursive algorithm to evaluate a polynomial on
+the $n$th roots of unity efficiently.
+
+To write the recursion begin by handling the base case: i.e where
+the polynomial has zero terms (so its zero) and handling the 
+case where there is a single term to the polynomial.  Then write
+an inductive function for a list of coefficients of non-zero length
+that splits the polynomial into the even-power terms and the 
+odd-power terms and evaluates the appropriate $n/2$th roots of unity
+and on those. Write a function that can take the evaluation of the
+even-power terms and odd-power terms on those roots of unity and
+combine them to have an evaluation of the original polynomial on the
+$n$th roots of unity.  So, the algorithm will have a step of breaking
+the polynomial apart, recursing, and then combining those two
+parts together.  It may be useful to keep a parameter in the function
+which keeps track of the order of the polynomial (so that you don't have to keep computing the lengths of lists) but use that
+only in helper functions:  the main `fft` function
+you implement should only take as an argument a `Poly`.
+
+8. Implement the divide a conquer algorithm for polynomials with $2^n$, call it `fft`.  Return `undefined` if the length of the input is wrong
+The outpu should be a new type you implement, `PolyPointsFFT`, that will serve as the new `PolyPoints` type (what can be simplified?).  Implement the function `toPolyPointsFFT` that uses our fast evaluation algorithm to get `PolyPointsFFT` from `Poly`.  Ensure that the length is
+correct so implement a function `polyPad` which will ensure the underlying list of the polynomial is a power of 2.
+
+## Polynomial Interpolation
+
+The inverse process of moving from `PolyPointsFFT` back to `Poly`
+can be performed with a very similar algorithm.  Indeed,
+we can use some mathematical identities to simplify our implementation
+and use our underlying `FFT` algorithm
+
+10. Implement `invfft` using the identity. Write a test to ensure that `fft` and `invfft` invert each other. Implement `fromPolyPointsFFT` to go back to the original representation.
+
+11. Implement `polyMultFFT` which employs the algorithm to quickly multiply polynomials.  Pay close attention to the number of points needed (you will have to think about it a little bit). Use `polyPad` for padding.
+
+## Extra Credit
+
+12. Extend the definition of `fft` to handle sequences of any length.
+
