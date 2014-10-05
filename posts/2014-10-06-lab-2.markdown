@@ -124,11 +124,16 @@ which will have the obvious type signature and should simply add the
 polynomial coefficients.  We also need to implement multiplication.
 There are a couple of relevant multiplication functions
 
-4. `polyScalMult` is a function that takes a polynomial and a scalar that outputs a polynomial.
+4. `polyScalMult` is a function that takes a polynomial and a scalar that outputs a polynomial. Use that function to implement `polyNegate` and then use that to define `polyDiff` which takes the difference between two polynomials. Write a function `polyAbs` also that takes the absolute value of all the coefficients.
+
+One way to test whether two polynomials are approximately equal (this is useful for tests) is you take the difference between the two
+polynomials' coefficients, take the absolute value of the difference (or the square), and then sum those transformed differences.
+
+5. Implement `polyApproxEqual` with the obvious type signature which checks for approximate equality up to a certain error tolerance.
 
 A trickier function which should work the obvious way is polynomial multiplication:
 
-5. Implement `polyMult` to multiply polynomials. Give the obvious (and slow!) implementation of this function as well as the obvious type signature.
+6. Implement `polyMult` to multiply polynomials. Give the obvious (and slow!) implementation of this function as well as the obvious type signature.
 
   The next chunk
 of the lab is built around writing a faster algorithm for implementing
@@ -141,12 +146,12 @@ they can be defined by sufficiently many points on the plane. Indeed,
 for a polynomial with `n` coefficents is determined by `n` points in the 
 plane.  
 
-6. Construct a new datatype `PolyPoints` which maintains two lists of x locations and y locations corresponding to the values of the polynomial, and the polynomial degree. Pick an order for the records and write a short comment justifying your choice.  Write a function `toPolyPoints` with the obvious type signature that maps  a polynomial, and a set of points to this new data type.  Use `undefined` for cases where the list of points is of insufficient length.
+7. Construct a new datatype `PolyPoints` which maintains two lists of x locations and y locations corresponding to the values of the polynomial, and the polynomial degree. Pick an order for the records and write a short comment justifying your choice.  Write a function `toPolyPoints` with the obvious type signature that maps  a polynomial, and a set of points to this new data type.  Use `undefined` for cases where the list of points is of insufficient length.
 
 A critical question is how to go back from `PolyPoints` to `Poly`. We will defer that question for the moment.  For the moment we want
 to have the usual algebraic rules for this alternative representation:
 
-7. Implement `polyPointsAdd`, `polyPointsScalMult`, `polyPointsMult`.
+8. Implement `polyPointsAdd`, `polyPointsScalMult`, `polyPointsMult`.
 
 ## Cleverly picking the evaluation points
 
@@ -161,18 +166,18 @@ By the [Fundamental Theorem of Algebra](http://en.wikipedia.org/wiki/Fundamental
 the exposition we will assume that $n$ is a _dyadic_ _integer_: i.e.
 $n=2^k$ for some integer $k$.  The $n$th roots of unity are the
 set 
-<center> $$e^{2\pi i\cdot 0/n}, e^{2\pi i\cdot 1/n},\ldots, e^{2\pi i\cdot (n-1)/n}$$ </center>
+<center> $$e^{-2\pi i\cdot 0/n}=1, e^{-2\pi i\cdot 1/n},\ldots, e^{-2\pi i\cdot (n-1)/n}$$ </center>
 
 and we will denote the $j$th $n$th root of unit as
-<center>$$\omega_{n,j}=e^{\frac{2\pi ij}{n}}.$$</center>
+<center>$$\omega_{n,j}=e^{-\frac{2\pi ij}{n}}.$$</center>
 
 A useful property of these roots of unity and the crucial component
 of our algorithm is shown in the following equations:
-<center> $$ ((e^{2\pi i \frac{0}{2}})^2, (e^{2\pi i \frac{1}{2}})^2) = (1, \cos(2\pi) + i\sin(2\pi)) = (1,1) $$</center>
+<center> $$ ((e^{-2\pi i \frac{0}{2}})^2, (e^{-2\pi i \frac{1}{2}})^2) = (1, \cos(2\pi) + i\sin(2\pi)) = (1,1) $$</center>
 
 and
 
-<center> $$ \begin{bmatrix}(e^{2\pi i \frac{0}{4}})^2 \\ (e^{2\pi i \frac{1}{4}})^2 \\ (e^{2\pi i \frac{2}{4}})^2 \\ (e^{2\pi i \frac{3}{4}})^2\end{bmatrix} = \begin{bmatrix}e^{2\pi i \frac{0}{2}} \\ e^{2\pi i \frac{1}{2}} \\ e^{2\pi i \frac{0}{2}} e^{2\pi i} \\ e^{2\pi i \frac{1}{2}} e^{2\pi i}\end{bmatrix} = \begin{bmatrix}e^{2\pi i \frac{0}{2}} \\ e^{2\pi i \frac{1}{2}} \\ e^{2\pi i \frac{0}{2}}  \\ e^{2\pi i \frac{1}{2}} \end{bmatrix} $$</center>
+<center> $$ \begin{bmatrix}(e^{-2\pi i \frac{0}{4}})^2 \\ (e^{-2\pi i \frac{1}{4}})^2 \\ (e^{-2\pi i \frac{2}{4}})^2 \\ (e^{-2\pi i \frac{3}{4}})^2\end{bmatrix} = \begin{bmatrix}e^{-2\pi i \frac{0}{2}} \\ e^{-2\pi i \frac{1}{2}} \\ e^{-2\pi i \frac{0}{2}} e^{-2\pi i} \\ e^{-2\pi i \frac{1}{2}} e^{-2\pi i}\end{bmatrix} = \begin{bmatrix}e^{-2\pi i \frac{0}{2}} \\ e^{-2\pi i \frac{1}{2}} \\ e^{-2\pi i \frac{0}{2}}  \\ e^{-2\pi i \frac{1}{2}} \end{bmatrix} $$</center>
 
 It is a simple exercise to generalize the pattern observed above. Essentially, the square of the $n$th roots of unity gives you the $n/2$th roots of unity twice.  We will use this redundancy to construct fast
 algorithms.
@@ -209,8 +214,8 @@ which keeps track of the order of the polynomial (so that you don't have to keep
 only in helper functions:  the main `fft` function
 you implement should only take as an argument a `Poly`.
 
-8. Implement the divide a conquer algorithm for polynomials with $2^n$, call it `fft`.  Return `undefined` if the length of the input is wrong
-The outpu should be a new type you implement, `PolyPointsFFT`, that will serve as the new `PolyPoints` type (what can be simplified?).  Implement the function `toPolyPointsFFT` that uses our fast evaluation algorithm to get `PolyPointsFFT` from `Poly`.  Ensure that the length is
+9. Implement the divide a conquer algorithm for polynomials with $2^n$, call it `fft`.  Return `undefined` if the length of the input is wrong
+The outpu should be a new type you implement, `PolyPointsFFT`, that will serve as the new `PolyPoints` type.  Implement the function `toPolyPointsFFT` that uses our fast evaluation algorithm to get `PolyPointsFFT` from `Poly`.  Ensure that the length is
 correct so implement a function `polyPad` which will ensure the underlying list of the polynomial is a power of 2.
 
 ## Polynomial Interpolation
@@ -218,9 +223,23 @@ correct so implement a function `polyPad` which will ensure the underlying list 
 The inverse process of moving from `PolyPointsFFT` back to `Poly`
 can be performed with a very similar algorithm.  Indeed,
 we can use some mathematical identities to simplify our implementation
-and use our underlying `FFT` algorithm
+and use our underlying `fft` algorithm.  Consider a polynomial with coefficients
+$a_0,a_1,\ldots,a_{n-1}$ then its value for the $j$th $n$th root of unity, $\omega_{n,j}$
+is
+<center>$$ \sum_{k=0}^{n-1} a_i e^{-2\pi i \frac{kj}{n}}. $$ </center>
+Consider [complex conjugation](http://en.wikipedia.org/wiki/Complex_conjugate), it is linear so
+the conjugate of the entry is 
+<center>$$ \sum_{k=0}^{n-1} \overline{a_i} e^{2\pi i \frac{kj}{n}} $$ </center>
+The $m$th component of the Fourier transform of this is
+<center>$$ \sum_{l=0}^{n-1}\left(\sum_{k=0}^{n-1} \overline{a_i} e^{2\pi i \frac{kj}{n}}\right) e^{-2\pi i \frac{lm}{n}} $$</center>
+which, using some facts about the exponential function yields
+<center>$$ n\overline{a_m}$$ </center>
+so if you take the conjugate and divide by $n$ you get back $a_m$.  So the algorithm is:
+<center>$$ \overline{\mathcal{F}\{\overline{(a_0,\ldots,a_{n-1})}\}}/n$$ </center>
+take the conjugate, take the Fourier transform of those conjugates, take the conjugate again, and finally divide by $n$. The
+concepts for this are explained [here](http://en.wikipedia.org/wiki/Discrete_Fourier_transform#Expressing_the_inverse_DFT_in_terms_of_the_DFT).
 
-10. Implement `invfft` using the identity. Write a test to ensure that `fft` and `invfft` invert each other. Implement `fromPolyPointsFFT` to go back to the original representation.
+10. Implement `invfft` using the identity. Write a test to ensure that `fft` and `invfft` invert each other (use a function from earlier since the test is only approximate). Implement `fromPolyPointsFFT` to go back to the original representation.
 
 11. Implement `polyMultFFT` which employs the algorithm to quickly multiply polynomials.  Pay close attention to the number of points needed (you will have to think about it a little bit). Use `polyPad` for padding.
 
