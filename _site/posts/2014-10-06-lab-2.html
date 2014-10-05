@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CS161 Labs - Lab 2: Onward to Rational Strassen!</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+	<link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">CS161 Labs</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Lab 2: Onward to Rational Strassen!</h1>
+
+            <div class="info">
+    Posted on October  6, 2014
+    
+</div>
+
+<h1 id="lab-submission-guidelines">Lab Submission Guidelines</h1>
+<p>Before we begin lab today I will discuss some details about the expected project setup for submission.</p>
+<h2 id="using-svn">Using SVN</h2>
+<p>In order to submit the lab we will use <code>svn</code>. This is an inferior and dated version control system that is easier to support with the systems setup the way they are. In the future we will use git. All of you should consider getting <a href="http://github.com/">a github account</a> since it is a way of indicating your potential to employers while you are just starting out.</p>
+<p>An example SVN interaction will look like</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">cd</span>
+    <span class="kw">svn</span> checkout student-cs161-aut-14   <span class="co"># get a copy of the repository -- run only once</span>
+    <span class="kw">cd</span> student-cs161-aut-14
+    <span class="kw">svn</span> up                  <span class="co"># check for any updates -- in our case comments and grades</span>
+    <span class="kw">mkdir</span> lab1              <span class="co"># make the directory for the new lab</span>
+    <span class="kw">svn</span> add lab1            <span class="co"># start tracking lab1</span>
+    <span class="kw">cd</span> lab1                 <span class="co"># move into the directory to begin work</span>
+    <span class="kw">emacs</span> main.hs
+    <span class="kw">svn</span> add main.hs         <span class="co"># add the saved work</span>
+    <span class="kw">svn</span> commit -m <span class="st">&quot;began work on main.hs&quot;</span>     <span class="co"># push your work to the central server</span></code></pre>
+<h2 id="project-layout">Project Layout</h2>
+<p>These instructions are based <a href="http://www.haskell.org/haskellwiki/How_to_write_a_Haskell_program">on this page from Haskell.org</a>. We aren’t going to move to that layout while your programs are simple but once we get passed IO topics in lecture we will incorporate this structure into future labs.</p>
+<p>For this project all I expect is: 1. <code>lab1.hs</code> – the main Haskell source code 2. <code>README</code> – a text file written in <a href="https://daringfireball.net/projects/markdown/basics">markdown</a> which contains your name, who (if anybody) you collaborated with (that info should also be in your source code for the specific function(s), and a brief explanation of what your code does/which problems in lab you completed. The purpose of this is to make grading easier so that you get back more helpful comments. 3. <code>LICENSE</code> – the license, you don’t have to include this but you are welcome to particularly if you want to develop the code into a project this can be nice to have so that other people can use your code. I generally use a <a href="http://opensource.org/licenses/BSD-2-Clause">BSD license</a>.</p>
+<p>For grading the graders will add in a file 4. <code>GRADING</code> – will have a comment summary (possibly we will put some comments directly in the code) as well as the grade. The grade is 0,1,2,3. 0 indicates that the project was far from completed/the code does not compile/the project was not handed in on time. 1 indicates the project was close to completion. 2 indicates the project was completed satisfactorily. 3 indicates that there was an extra credit achieved in addition to a complete project.</p>
+<h1 id="a-note-about-tests">A note about tests</h1>
+<p>During the course of this lab we are going to implement a variety of mathematical functions. For each of the functions implement construct a variable <code>test[n]</code> where <code>n</code> is an integer defined as</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">test[n] <span class="fu">=</span> f [input] <span class="fu">==</span> [output]</code></pre>
+<p>where <code>[input]</code> is some sample input into the function and <code>[output]</code> is a sample output that is computed by hand. If the function performs the correct computation then <code>test[n]</code> will have a value of <code>True</code> otherwise it will be <code>False</code>. Also define a variable <code>tests</code> which will be defined</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">tests <span class="fu">=</span> test1 <span class="fu">&amp;&amp;</span> test2 <span class="fu">&amp;&amp;</span> test3 <span class="fu">&amp;&amp;</span> <span class="fu">...</span> <span class="fu">&amp;&amp;</span> testn</code></pre>
+<p>which will be true if all the functions work.</p>
+<h1 id="polynomials-and-the-fast-fourier-transform">Polynomials and the Fast Fourier Transform</h1>
+<p>In this lab we will explore representations of polynomials and the algorthims to work with them. We will be using list and Algebraic datatypes.</p>
+<h2 id="complex-numbers">Complex Numbers</h2>
+<p>The natural set of numbers over which to study polynomials is the complex numbers. So we begin our program with</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Complex</span></code></pre>
+<p>the infix operator <code>:+</code> is the main thing to be concious of, look it up on hoogle or using the Haskell Platform. One of the main virtues of Haskell’s implementation of Complex is that we can use complex integers or complex floating point numbers and so it is defined to be able to use type variables. For this lab we will not use that feature and focus on floating point numbers.</p>
+<h2 id="polynomials">Polynomials</h2>
+<ol style="list-style-type: decimal">
+<li>To begin we will implement an algebraic data type <code>Poly</code> with type constructor <code>Poly</code>. Use a list as the fundamental data structure underlying the representation. Also implement a function <code>polyCoeffs</code> to access the chosen representation.</li>
+</ol>
+<p>Review the class notes if you aren’t sure how to implement algebraic data types. One of the main uses of polynomials is as functions so:</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Define a function <code>polyEval</code> with the following type signature:</li>
+</ol>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">polyEval ::</span> <span class="dt">Poly</span> <span class="ot">-&gt;</span> (<span class="dt">Complex</span> <span class="dt">RealFloat</span>) <span class="ot">-&gt;</span> (<span class="dt">Complex</span> <span class="dt">RealFloat</span>)</code></pre>
+<p>In order to work with polynomials we will want to implement some basic semiring operations for them:</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Implement <code>polyAdd</code> to add to polynomials. Include the obvious type signature. This function will likely use recursion on lists.</li>
+</ol>
+<p>which will have the obvious type signature and should simply add the polynomial coefficients. We also need to implement multiplication. There are a couple of relevant multiplication functions</p>
+<ol start="4" style="list-style-type: decimal">
+<li><code>polyScalMult</code> is a function that takes a polynomial and a scalar that outputs a polynomial.</li>
+</ol>
+<p>A trickier function which should work the obvious way is polynomial multiplication:</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Implement <code>polyMult</code> to multiply polynomials. Give the obvious (and slow!) implementation of this function as well as the obvious type signature.</li>
+</ol>
+<p>The next chunk of the lab is built around writing a faster algorithm for implementing polynomial multiplication.</p>
+<h2 id="an-alternative-parameterization">An Alternative Parameterization</h2>
+<p>It turns out that polynomials can be defined by their coefficients but they can be defined by sufficiently many points on the plane. Indeed, for a polynomial with <code>n</code> coefficents is determined by <code>n</code> points in the plane.</p>
+<ol start="6" style="list-style-type: decimal">
+<li>Construct a new datatype <code>PolyPoints</code> which maintains two lists of x locations and y locations corresponding to the values of the polynomial, and the polynomial degree. Pick an order for the records and write a short comment justifying your choice. Write a function <code>toPolyPoints</code> with the obvious type signature that maps a polynomial, and a set of points to this new data type. Use <code>undefined</code> for cases where the list of points is of insufficient length.</li>
+</ol>
+<p>A critical question is how to go back from <code>PolyPoints</code> to <code>Poly</code>. We will defer that question for the moment. For the moment we want to have the usual algebraic rules for this alternative representation:</p>
+<ol start="7" style="list-style-type: decimal">
+<li>Implement <code>polyPointsAdd</code>, <code>polyPointsScalMult</code>, <code>polyPointsMult</code>.</li>
+</ol>
+<h2 id="cleverly-picking-the-evaluation-points">Cleverly picking the evaluation points</h2>
+The <code>toPolyPoints</code> function you’ve implemented is likely very slow and is <span class="math"><em>O</em>(<em>n</em><sup>2</sup>)</span>. It turns out that there is an <span class="math"><em>O</em>(<em>n</em>log<em>n</em>)</span> function for evaluating the points that comes from picking the points to be the <span class="math"><em>n</em></span>th roots of unity. These are the complex numbers <span class="math"><em>ω</em><sub>0</sub>, <em>ω</em><sub>1</sub>, …, <em>ω</em><sub><em>n</em> − 1</sub></span> such that
+<center>
+<br /><span class="math"><em>ω</em><sub><em>i</em></sub><sup><em>n</em></sup> = 1.</span><br />
+</center>
+By the <a href="http://en.wikipedia.org/wiki/Fundamental_theorem_of_algebra">Fundamental Theorem of Algebra</a> and the <a href="http://en.wikipedia.org/wiki/Factor_theorem">Factor Theorem</a> there are <span class="math"><em>n</em></span> <span class="math"><em>n</em></span>th roots of unity. For the rest of the exposition we will assume that <span class="math"><em>n</em></span> is a <em>dyadic</em> <em>integer</em>: i.e. <span class="math"><em>n</em> = 2<sup><em>k</em></sup></span> for some integer <span class="math"><em>k</em></span>. The <span class="math"><em>n</em></span>th roots of unity are the set
+<center>
+<br /><span class="math"><em>e</em><sup>2<em>π</em><em>i</em> ⋅ 0/<em>n</em></sup>, <em>e</em><sup>2<em>π</em><em>i</em> ⋅ 1/<em>n</em></sup>, …, <em>e</em><sup>2<em>π</em><em>i</em> ⋅ (<em>n</em> − 1)/<em>n</em></sup></span><br />
+</center>
+and we will denote
+<center>
+<br /><span class="math">$$\omega_{n,j}=e^{\frac{2\pi ij}{n}}.$$</span><br />
+</center>
+<ol start="8" style="list-style-type: decimal">
+<li>Implement the divide a conquer algorithm for polynomials with <span class="math">2<sup><em>n</em></sup></span>, call it <code>fft</code>. Return <code>undefined</code> if the length of the input is wrong The input should be a new type you implement, <code>PolyPointsFFT</code>, that will serve as the new <code>PolyPoints</code> type (what can be simplified?). Implement the function <code>toPolyPointsFFT</code> that uses our fast evaluation algorithm to get <code>PolyPointsFFT</code> from <code>Poly</code>. Ensure that the length is correct so implement a function <code>polyPad</code> which will ensure the underlying list of the polynomial is a power of 2.</li>
+</ol>
+<h2 id="polynomial-interpolation">Polynomial Interpolation</h2>
+<p>The inverse process of moving from <code>PolyPointsFFT</code> back to <code>Poly</code> can be performed with a very similar algorithm. Indeed, we can use some mathematical identities to simplify our implementation and use our underlying <code>FFT</code> algorithm</p>
+<ol start="10" style="list-style-type: decimal">
+<li><p>Implement <code>invfft</code> using the identity. Write a test to ensure that <code>fft</code> and <code>invfft</code> invert each other. Implement <code>fromPolyPointsFFT</code> to go back to the original representation.</p></li>
+<li><p>Implement <code>polyMultFFT</code> which employs the algorithm to quickly multiply polynomials. Pay close attention to the number of points needed (you will have to think about it a little bit). Use <code>polyPad</code> for padding.</p></li>
+</ol>
+<h2 id="extra-credit">Extra Credit</h2>
+<ol start="12" style="list-style-type: decimal">
+<li>Extend the definition of <code>fft</code> to handle sequences of any length.</li>
+</ol>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
