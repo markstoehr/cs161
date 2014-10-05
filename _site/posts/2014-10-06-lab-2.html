@@ -55,7 +55,8 @@
 <pre class="sourceCode haskell"><code class="sourceCode haskell">tests <span class="fu">=</span> test1 <span class="fu">&amp;&amp;</span> test2 <span class="fu">&amp;&amp;</span> test3 <span class="fu">&amp;&amp;</span> <span class="fu">...</span> <span class="fu">&amp;&amp;</span> testn</code></pre>
 <p>which will be true if all the functions work.</p>
 <h1 id="polynomials-and-the-fast-fourier-transform">Polynomials and the Fast Fourier Transform</h1>
-<p>In this lab we will explore representations of polynomials and the algorthims to work with them. We will be using list and Algebraic datatypes.</p>
+<p>In this lab we will explore representations of polynomials and the algorthims to work with them. We will be using list and Algebraic datatypes. The Fast Fourier Transform is an algorithm that was arguably first considered by <a href="http://www.cis.rit.edu/class/simg716/Gauss_History_FFT.pdf">Gauss</a> but the first real algorithm on computers to compute it is due to <a href="http://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm">Cooley and Tukey (1965)</a>. The algorithm is certain among <a href="https://www.siam.org/pdf/news/637.pdf">the top 10 computer science algorithms of the twentieth century</a>. This is one of those algorithms that is running all the time basically anywhere where there are many computers (and phones!) running.</p>
+<p>The goal of this lab is to introduce you to this beautiful algorithm and for you to get some practice manipulating lists. A secondary goal is to get you thinking about type systems and how Haskell syntax can represent abstract mathematical concepts. The latter goal will be explored in greater detail later in the course.</p>
 <h2 id="complex-numbers">Complex Numbers</h2>
 <p>The natural set of numbers over which to study polynomials is the complex numbers. So we begin our program with</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Complex</span></code></pre>
@@ -100,12 +101,39 @@ By the <a href="http://en.wikipedia.org/wiki/Fundamental_theorem_of_algebra">Fun
 <center>
 <br /><span class="math"><em>e</em><sup>2<em>π</em><em>i</em> ⋅ 0/<em>n</em></sup>, <em>e</em><sup>2<em>π</em><em>i</em> ⋅ 1/<em>n</em></sup>, …, <em>e</em><sup>2<em>π</em><em>i</em> ⋅ (<em>n</em> − 1)/<em>n</em></sup></span><br />
 </center>
-and we will denote
+and we will denote the <span class="math"><em>j</em></span>th <span class="math"><em>n</em></span>th root of unit as
 <center>
 <br /><span class="math">$$\omega_{n,j}=e^{\frac{2\pi ij}{n}}.$$</span><br />
 </center>
+A useful property of these roots of unity and the crucial component of our algorithm is shown in the following equations:
+<center>
+<br /><span class="math">$$ ((e^{2\pi i \frac{0}{2}})^2, (e^{2\pi i \frac{1}{2}})^2) = (1, \cos(2\pi) + i\sin(2\pi)) = (1,1) $$</span><br />
+</center>
+<p>and</p>
+<center>
+<br /><span class="math">$$ \begin{bmatrix}(e^{2\pi i \frac{0}{4}})^2 \\ (e^{2\pi i \frac{1}{4}})^2 \\ (e^{2\pi i \frac{2}{4}})^2 \\ (e^{2\pi i \frac{3}{4}})^2\end{bmatrix} = \begin{bmatrix}e^{2\pi i \frac{0}{2}} \\ e^{2\pi i \frac{1}{2}} \\ e^{2\pi i \frac{0}{2}} e^{2\pi i} \\ e^{2\pi i \frac{1}{2}} e^{2\pi i}\end{bmatrix} = \begin{bmatrix}e^{2\pi i \frac{0}{2}} \\ e^{2\pi i \frac{1}{2}} \\ e^{2\pi i \frac{0}{2}}  \\ e^{2\pi i \frac{1}{2}} \end{bmatrix} $$</span><br />
+</center>
+<p>It is a simple exercise to generalize the pattern observed above. Essentially, the square of the <span class="math"><em>n</em></span>th roots of unity gives you the <span class="math"><em>n</em>/2</span>th roots of unity twice. We will use this redundancy to construct fast algorithms.</p>
+The next crucial observation involves decomposing polynomials into the even-power terms and the odd-power terms. The idea is that if we have a polynomial <span class="math"><em>A</em>(<em>x</em>)</span> defined to be
+<center>
+<br /><span class="math"><em>A</em>(<em>x</em>) = <em>a</em><sub>0</sub> + <em>a</em><sub>1</sub><em>x</em> + <em>a</em><sub>2</sub><em>x</em><sup>2</sup> + ⋯ + <em>a</em><sub><em>n</em> − 1</sub><em>x</em><sup><em>n</em> − 1</sup></span><br />
+</center>
+then we may write
+<center>
+<br /><span class="math"><em>A</em>(<em>x</em>) = <em>A</em><sub><em>e</em><em>v</em><em>e</em><em>n</em></sub>(<em>x</em><sup>2</sup>) + <em>x</em><em>A</em><sub><em>o</em><em>d</em><em>d</em></sub>(<em>x</em><sup>2</sup>)</span><br />
+</center>
+where
+<center>
+<br /><span class="math"><em>A</em><sub><em>e</em><em>v</em><em>e</em><em>n</em></sub>(<em>x</em>) = <em>a</em><sub>0</sub> + <em>a</em><sub>2</sub><em>x</em> + ⋯ + <em>a</em><sub><em>n</em> − 2</sub><em>x</em><sup><em>n</em>/2</sup></span><br />
+</center>
+and
+<center>
+<br /><span class="math"><em>A</em><sub><em>o</em><em>d</em><em>d</em></sub>(<em>x</em>) = <em>a</em><sub>1</sub> + <em>a</em><sub>3</sub><em>x</em> + ⋯ + <em>a</em><sub><em>n</em> − 1</sub><em>x</em><sup><em>n</em>/2</sup></span><br />
+</center>
+<p>. If you don’t see this equivalence immediately, try writing down a simple numerical example. The observation about the squares of roots of unity and this additive decomposition of polynomials forms the basis for a recursive algorithm to evaluate a polynomial on the <span class="math"><em>n</em></span>th roots of unity efficiently.</p>
+<p>To write the recursion begin by handling the base case: i.e where the polynomial has zero terms (so its zero) and handling the case where there is a single term to the polynomial. Then write an inductive function for a list of coefficients of non-zero length that splits the polynomial into the even-power terms and the odd-power terms and evaluates the appropriate <span class="math"><em>n</em>/2</span>th roots of unity and on those. Write a function that can take the evaluation of the even-power terms and odd-power terms on those roots of unity and combine them to have an evaluation of the original polynomial on the <span class="math"><em>n</em></span>th roots of unity. So, the algorithm will have a step of breaking the polynomial apart, recursing, and then combining those two parts together. It may be useful to keep a parameter in the function which keeps track of the order of the polynomial (so that you don’t have to keep computing the lengths of lists) but use that only in helper functions: the main <code>fft</code> function you implement should only take as an argument a <code>Poly</code>.</p>
 <ol start="8" style="list-style-type: decimal">
-<li>Implement the divide a conquer algorithm for polynomials with <span class="math">2<sup><em>n</em></sup></span>, call it <code>fft</code>. Return <code>undefined</code> if the length of the input is wrong The input should be a new type you implement, <code>PolyPointsFFT</code>, that will serve as the new <code>PolyPoints</code> type (what can be simplified?). Implement the function <code>toPolyPointsFFT</code> that uses our fast evaluation algorithm to get <code>PolyPointsFFT</code> from <code>Poly</code>. Ensure that the length is correct so implement a function <code>polyPad</code> which will ensure the underlying list of the polynomial is a power of 2.</li>
+<li>Implement the divide a conquer algorithm for polynomials with <span class="math">2<sup><em>n</em></sup></span>, call it <code>fft</code>. Return <code>undefined</code> if the length of the input is wrong The outpu should be a new type you implement, <code>PolyPointsFFT</code>, that will serve as the new <code>PolyPoints</code> type (what can be simplified?). Implement the function <code>toPolyPointsFFT</code> that uses our fast evaluation algorithm to get <code>PolyPointsFFT</code> from <code>Poly</code>. Ensure that the length is correct so implement a function <code>polyPad</code> which will ensure the underlying list of the polynomial is a power of 2.</li>
 </ol>
 <h2 id="polynomial-interpolation">Polynomial Interpolation</h2>
 <p>The inverse process of moving from <code>PolyPointsFFT</code> back to <code>Poly</code> can be performed with a very similar algorithm. Indeed, we can use some mathematical identities to simplify our implementation and use our underlying <code>FFT</code> algorithm</p>
