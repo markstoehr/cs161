@@ -1,5 +1,5 @@
 ---
-title: Lab 2: Onward to Rational Strassen!
+title: Lab 1: Onward to Rational Strassen!
 ---
 
 # Lab Submission Guidelines
