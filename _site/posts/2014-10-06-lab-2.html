@@ -111,11 +111,11 @@ and we will denote the <span class="math"><em>j</em></span>th <span class="math"
 </center>
 A useful property of these roots of unity and the crucial component of our algorithm is shown in the following equations:
 <center>
-<br /><span class="math">$$ ((e^{-2\pi i \frac{0}{2}})^2, (e^{-2\pi i \frac{1}{2}})^2) = (1, \cos(2\pi) + i\sin(2\pi)) = (1,1) $$</span><br />
+<br /><span class="math">$$ \omega_{n,j}^2=(e^{-2\pi i \frac{j}{n}})^2 = e^{-2\pi i \frac{j}{n/2}} = \begin{cases} e^{-2\pi i \frac{j}{n/2}} &amp; j &lt; n/2\\ e^{-2\pi i \frac{j-n/2}{n/2}}e^{-2\pi i} &amp; j \geq n/2\end{cases} $$</span><br />
 </center>
-<p>and</p>
+so that
 <center>
-<br /><span class="math">$$ \begin{bmatrix}(e^{-2\pi i \frac{0}{4}})^2 \\ (e^{-2\pi i \frac{1}{4}})^2 \\ (e^{-2\pi i \frac{2}{4}})^2 \\ (e^{-2\pi i \frac{3}{4}})^2\end{bmatrix} = \begin{bmatrix}e^{-2\pi i \frac{0}{2}} \\ e^{-2\pi i \frac{1}{2}} \\ e^{-2\pi i \frac{0}{2}} e^{-2\pi i} \\ e^{-2\pi i \frac{1}{2}} e^{-2\pi i}\end{bmatrix} = \begin{bmatrix}e^{-2\pi i \frac{0}{2}} \\ e^{-2\pi i \frac{1}{2}} \\ e^{-2\pi i \frac{0}{2}}  \\ e^{-2\pi i \frac{1}{2}} \end{bmatrix} $$</span><br />
+<br /><span class="math">$$ \omega_{n,j}^2= \begin{cases} \omega_{n/2,j} &amp; j &lt; n/2\\ \omega_{n/2,j-n/2} &amp; j \geq n/2\end{cases} $$</span><br />
 </center>
 <p>It is a simple exercise to generalize the pattern observed above. Essentially, the square of the <span class="math"><em>n</em></span>th roots of unity gives you the <span class="math"><em>n</em>/2</span>th roots of unity twice. We will use this redundancy to construct fast algorithms.</p>
 The next crucial observation involves decomposing polynomials into the even-power terms and the odd-power terms. The idea is that if we have a polynomial <span class="math"><em>A</em>(<em>x</em>)</span> defined to be
