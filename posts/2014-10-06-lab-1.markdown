@@ -112,7 +112,7 @@ is as functions so:
 2. Define a function `polyEval` with the following type signature:
 
 ```haskell
-polyEval :: Poly -> (Complex RealFloat) -> (Complex RealFloat)
+polyEval :: Poly -> (Complex Double) -> (Complex Double)
 ```
 
    In order to work with polynomials we will want to implement
