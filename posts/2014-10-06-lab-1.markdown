@@ -169,7 +169,9 @@ set
 <center> $$e^{-2\pi i\cdot 0/n}=1, e^{-2\pi i\cdot 1/n},\ldots, e^{-2\pi i\cdot (n-1)/n}$$ </center>
 
 and we will denote the $j$th $n$th root of unit as
-<center>$$\omega_{n,j}=e^{-\frac{2\pi ij}{n}}.$$</center>
+<center>$$\omega_{n,j}=e^{-\frac{2\pi ij}{n}}=\cos(2\pi\frac{j}{n})- i\sin(2\pi \frac{j}{n}).$$</center>
+Note that in Haskell the complex number $a+bi$ is entered in as
+$\texttt{a :+ b}$. So that the complex number $i$ is written $\texttt{0.0 :+ 1.0}$.
 
 A useful property of these roots of unity and the crucial component
 of our algorithm is shown in the following equations:

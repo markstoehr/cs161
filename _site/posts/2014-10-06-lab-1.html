@@ -107,8 +107,9 @@ By the <a href="http://en.wikipedia.org/wiki/Fundamental_theorem_of_algebra">Fun
 </center>
 and we will denote the <span class="math"><em>j</em></span>th <span class="math"><em>n</em></span>th root of unit as
 <center>
-<br /><span class="math">$$\omega_{n,j}=e^{-\frac{2\pi ij}{n}}.$$</span><br />
+<br /><span class="math">$$\omega_{n,j}=e^{-\frac{2\pi ij}{n}}=\cos(2\pi\frac{j}{n})- i\sin(2\pi \frac{j}{n}).$$</span><br />
 </center>
+<p>Note that in Haskell the complex number <span class="math"><em>a</em> + <em>b</em><em>i</em></span> is entered in as <span class="math"><code>a :+ b</code></span>. So that the complex number <span class="math"><em>i</em></span> is written <span class="math"><code>0.0 :+ 1.0</code></span>.</p>
 A useful property of these roots of unity and the crucial component of our algorithm is shown in the following equations:
 <center>
 <br /><span class="math">$$ \omega_{n,j}^2=(e^{-2\pi i \frac{j}{n}})^2 = e^{-2\pi i \frac{j}{n/2}} = \begin{cases} e^{-2\pi i \frac{j}{n/2}} &amp; j &lt; n/2\\ e^{-2\pi i \frac{j-n/2}{n/2}}e^{-2\pi i} &amp; j \geq n/2\end{cases} $$</span><br />
