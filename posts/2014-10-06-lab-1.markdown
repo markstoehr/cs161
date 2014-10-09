@@ -229,9 +229,14 @@ Consider [complex conjugation](http://en.wikipedia.org/wiki/Complex_conjugate), 
 the conjugate of the entry is 
 <center>$$ \sum_{k=0}^{n-1} \overline{a_k} e^{2\pi i \frac{kj}{n}} $$ </center>
 The $m$th component of the Fourier transform of this is
-<center>$$ \sum_{l=0}^{n-1}\left(\sum_{k=0}^{n-1} \overline{a_k} e^{2\pi i \frac{kl}{n}}\right) e^{-2\pi i \frac{lm}{n}} $$</center>
-which, using some facts about the exponential function yields
-<center>$$ n\overline{a_m}$$ </center>
+<center>$$ \sum_{l=0}^{n-1}\left(\sum_{k=0}^{n-1} \overline{a_k} e^{2\pi i \frac{kl}{n}}\right) e^{-2\pi i \frac{lm}{n}} = \sum_{k=0}^{n-1}\left(\overline{a_{k}}\sum_{l=0}^{n-1}e^{2\pi i\frac{k(l-m)}{n}}\right) $$</center>,
+and since
+<center>$$ \sum_{l=0}^{n-1}e^{2\pi i\frac{k(l-m)}{n}}=\begin{cases}
+n & l=m\\
+0 & \text{otherwise}
+\end{cases}  $$</center>
+ we get that 
+<center>$$\sum_{k=0}^{n-1}\left(\overline{a_{k}}\sum_{l=0}^{n-1}e^{2\pi i\frac{k(l-m)}{n}}\right) =  n\overline{a_m}$$ </center>
 so if you take the conjugate and divide by $n$ you get back $a_m$.  So the algorithm is:
 <center>$$ \overline{\mathcal{F}\{\overline{(a_0,\ldots,a_{n-1})}\}}/n$$ </center>
 take the conjugate, take the Fourier transform of those conjugates, take the conjugate again, and finally divide by $n$. The
