@@ -224,12 +224,12 @@ we can use some mathematical identities to simplify our implementation
 and use our underlying `fft` algorithm.  Consider a polynomial with coefficients
 $a_0,a_1,\ldots,a_{n-1}$ then its value for the $j$th $n$th root of unity, $\omega_{n,j}$
 is
-<center>$$ \sum_{k=0}^{n-1} a_i e^{-2\pi i \frac{kj}{n}}. $$ </center>
+<center>$$ \sum_{k=0}^{n-1} a_k e^{-2\pi i \frac{kj}{n}}. $$ </center>
 Consider [complex conjugation](http://en.wikipedia.org/wiki/Complex_conjugate), it is linear so
 the conjugate of the entry is 
-<center>$$ \sum_{k=0}^{n-1} \overline{a_i} e^{2\pi i \frac{kj}{n}} $$ </center>
+<center>$$ \sum_{k=0}^{n-1} \overline{a_k} e^{2\pi i \frac{kj}{n}} $$ </center>
 The $m$th component of the Fourier transform of this is
-<center>$$ \sum_{l=0}^{n-1}\left(\sum_{k=0}^{n-1} \overline{a_i} e^{2\pi i \frac{kj}{n}}\right) e^{-2\pi i \frac{lm}{n}} $$</center>
+<center>$$ \sum_{l=0}^{n-1}\left(\sum_{k=0}^{n-1} \overline{a_k} e^{2\pi i \frac{kl}{n}}\right) e^{-2\pi i \frac{lm}{n}} $$</center>
 which, using some facts about the exponential function yields
 <center>$$ n\overline{a_m}$$ </center>
 so if you take the conjugate and divide by $n$ you get back $a_m$.  So the algorithm is:

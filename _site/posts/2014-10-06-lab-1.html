@@ -142,15 +142,15 @@ and
 <h2 id="polynomial-interpolation">Polynomial Interpolation</h2>
 The inverse process of moving from <code>PolyPointsFFT</code> back to <code>Poly</code> can be performed with a very similar algorithm. Indeed, we can use some mathematical identities to simplify our implementation and use our underlying <code>fft</code> algorithm. Consider a polynomial with coefficients <span class="math"><em>a</em><sub>0</sub>, <em>a</em><sub>1</sub>, …, <em>a</em><sub><em>n</em> − 1</sub></span> then its value for the <span class="math"><em>j</em></span>th <span class="math"><em>n</em></span>th root of unity, <span class="math"><em>ω</em><sub><em>n</em>, <em>j</em></sub></span> is
 <center>
-<br /><span class="math">$$ \sum_{k=0}^{n-1} a_i e^{-2\pi i \frac{kj}{n}}. $$</span><br />
+<br /><span class="math">$$ \sum_{k=0}^{n-1} a_k e^{-2\pi i \frac{kj}{n}}. $$</span><br />
 </center>
 Consider <a href="http://en.wikipedia.org/wiki/Complex_conjugate">complex conjugation</a>, it is linear so the conjugate of the entry is
 <center>
-<br /><span class="math">$$ \sum_{k=0}^{n-1} \overline{a_i} e^{2\pi i \frac{kj}{n}} $$</span><br />
+<br /><span class="math">$$ \sum_{k=0}^{n-1} \overline{a_k} e^{2\pi i \frac{kj}{n}} $$</span><br />
 </center>
 The <span class="math"><em>m</em></span>th component of the Fourier transform of this is
 <center>
-<br /><span class="math">$$ \sum_{l=0}^{n-1}\left(\sum_{k=0}^{n-1} \overline{a_i} e^{2\pi i \frac{kj}{n}}\right) e^{-2\pi i \frac{lm}{n}} $$</span><br />
+<br /><span class="math">$$ \sum_{l=0}^{n-1}\left(\sum_{k=0}^{n-1} \overline{a_k} e^{2\pi i \frac{kl}{n}}\right) e^{-2\pi i \frac{lm}{n}} $$</span><br />
 </center>
 which, using some facts about the exponential function yields
 <center>
