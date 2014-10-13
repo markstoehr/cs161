@@ -1,0 +1,42 @@
+---
+title: Lab 2: Rader's FFT
+---
+
+# Special Note
+
+This is an extra-credit lab.  The lab due this week is last week's lab.
+
+# Rader's FFT
+
+This lab introduces you to the fascinating world of FFT algorithms.  Recall that the FFT is nothing other
+than evaluating a polynomial at the roots of unity.  There is no single
+fastest FFT algorithm and every one has various tradeoffs in terms of memory, parallelization, time complexity
+all of which usually depend on characteristics of the sequence you are analyzing.  In this lab
+we will address how to efficiently compute an FFT for a prime-length sequence.
+
+We note that this is missing from last-week's exposition since the recursive divide and conquer
+algorithm required the input sequence to have length equal to $2^k$ for some integer $k$.
+
+## Cyclic Groups
+
+The central insight of [Rader's FFT algorithm](http://en.wikipedia.org/wiki/Rader%27s_FFT_algorithm)
+is that an FFT of length $p$ may be computed with a convolution of two sequences of length $p-1$
+where $p$ is a prime.  Recall that the discrete Fourier transform (DFT) evaluates a polynomial
+of degree $N-1$
+$a(x) = a_0 + a_1x + \cdots +a_{N-1}x^{N-1}$ on the $N$th roots of unity $\exp(-2\pi ik/N)$.
+These roots of unity are 
+<center> $$1,e^{-2\pi i\frac{1}{N}},e^{-2\pi i\frac{2}{N}},\ldots,e^{-2\pi i \frac{N-1}{N}}.$$</center>
+The $k$th coefficient is
+<center>$$ A_k=a\left(e^{-2\pi i\frac{k}{N}}\right) = \sum_{n=0}^{N-1} a_n e^{-2\pi i\frac{kn}{N}}. $$  </center>
+
+If $N$ is prime then the set of numbers $\{1,2,\ldots, N-1\}$ forms a group under multiplication modulo $N$:
+i.e. for every $p\in \{1,2,\ldots,N-1\}$ there exists a $q\in\{1,2,\ldots,N-1\}$ such that 
+<center> $$pq \equiv 1 \mod N$$</center>
+which means that there is some integer $d$ such that $pq=dN+1$.  
+A simple example of this is the case where $N=2$ then the only number in this group is $1$ and clearly
+$1\cdot 1 = 0\cdot 2 + 1$.  The next group is $N=3$, in this case observe that $2\cdot 2=1\cdot 3+1$ so
+$1=1^{-1}$ and $2=2^{-1}$.  The next group is $N=5$, here $1=1^{-1}$ and $2\cdot 3=1\cdot 5 + 1$ so
+$2=3^{-1}$ and $3=2^{-1}$.  We also have that $4\cdot 4 = 3\cdot 5 + 1$ hence $4=4^{-1}$ in the group when
+$N=5$.
+
+
