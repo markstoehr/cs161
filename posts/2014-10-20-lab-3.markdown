@@ -59,7 +59,7 @@ n=[rotation factor]
 [plaintext]
 ```
 
-I will provide a ciphertext to decode, `p1.txt` among the lab files.
+I will provide a ciphertext to decode, `c1.txt` among the lab files.
 It is highly recommended that you create your own plaintexts, 
 encode them using the `rot` program from class and then see
 if you can decode them.
@@ -89,7 +89,7 @@ are not encoded and ignored by the encryption, also,
  there are no special characters: just
 `[A-Z]`.  Again, write your own Vigenère encryption and produce a
 test ciphertext to make sure that your code works before embarking
-on the more challenging lab assignment of `p2.txt`.
+on the more challenging lab assignment of `c2.txt`.
 
 You may also assume that the password comes from words in
  dictionary (recalling that everything is upper case).

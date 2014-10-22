@@ -48,7 +48,7 @@
 <p>where <code>derot</code> prints to standard output</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">n=</span>[<span class="kw">rotation</span> factor]
 [<span class="kw">plaintext</span>]</code></pre>
-<p>I will provide a ciphertext to decode, <code>p1.txt</code> among the lab files. It is highly recommended that you create your own plaintexts, encode them using the <code>rot</code> program from class and then see if you can decode them.</p>
+<p>I will provide a ciphertext to decode, <code>c1.txt</code> among the lab files. It is highly recommended that you create your own plaintexts, encode them using the <code>rot</code> program from class and then see if you can decode them.</p>
 <h2 id="breaking-a-vigenère-cipher-of-known-password-length">Breaking a Vigenère Cipher of known password length</h2>
 <p>This is essentially a generalization of the Caesar rotation cipher. This cipher is contained in <a href="../fls/c2.txt">c2.txt</a> and the password used is of length 16. This means that you have 16 rotation ciphers running simultaneously so if <code>s</code> is your ciphertext then <code>s !! 0</code>, <code>s !! 16</code>, <code>s !! 32</code>, etc. all have the same rotation cipher. The same is true for <code>s !! 1</code>, <code>s !! 17</code>, etc.</p>
 <p>Write a bash tool</p>
@@ -56,7 +56,7 @@
 <p>which takes a ciphertext file and a length then outputs the plaintext and the password.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">password=</span>[<span class="kw">estimated</span> password]
 [<span class="kw">plaintext</span>]</code></pre>
-<p>For this problem all of the letters are upper case, the spaces are not encoded and ignored by the encryption, also, there are no special characters: just <code>[A-Z]</code>. Again, write your own Vigenère encryption and produce a test ciphertext to make sure that your code works before embarking on the more challenging lab assignment of <code>p2.txt</code>.</p>
+<p>For this problem all of the letters are upper case, the spaces are not encoded and ignored by the encryption, also, there are no special characters: just <code>[A-Z]</code>. Again, write your own Vigenère encryption and produce a test ciphertext to make sure that your code works before embarking on the more challenging lab assignment of <code>c2.txt</code>.</p>
 <p>You may also assume that the password comes from words in dictionary (recalling that everything is upper case). Use that fact in your code.</p>
 <h2 id="using-trees-for-n-gram-counts">Using Trees for N-gram counts</h2>
 <p>In order to crack this code it is very likely you will make use of n-gram counts. An letter n-gram count is the number of times a particular sequence of characters occurs in a text. Consider the letter bigram <code>VVV</code> which does not occur in any English word but <code>ORM</code> does.<br />One may which to check how many of the letter n-grams in a candidate decoding of the ciphertext actually occur in the dictionary: i.e. do the ciphertext letter n-gram statistics match the dictionary letter n-gram statistics? This is generally a very hard question to work on but its made easier by the fact that the letter n-grams which occur in English are sparse and highly concentrated. That is, most letter n-grams never occur in English so this can be a big tip off that a particular decoding sequence is not possible.</p>
