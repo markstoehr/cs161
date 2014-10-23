@@ -50,7 +50,7 @@
 [<span class="kw">plaintext</span>]</code></pre>
 <p>I will provide a ciphertext to decode, <code>c1.txt</code> among the lab files. It is highly recommended that you create your own plaintexts, encode them using the <code>rot</code> program from class and then see if you can decode them.</p>
 <h2 id="breaking-a-vigenère-cipher-of-known-password-length">Breaking a Vigenère Cipher of known password length</h2>
-<p>This is essentially a generalization of the Caesar rotation cipher. This cipher is contained in <a href="../fls/c2.txt">c2.txt</a> and the password used is of length 15. This means that you have 15 rotation ciphers running simultaneously so if <code>s</code> is your ciphertext then <code>s !! 0</code>, <code>s !! 15</code>, <code>s !! 30</code>, etc. all have the same rotation cipher. The same is true for <code>s !! 1</code>, <code>s !! 17</code>, etc.</p>
+<p>This is essentially a generalization of the Caesar rotation cipher. This cipher is contained in <a href="../fls/c2.txt">c2.txt</a> and the password used is of length 15. This means that you have 15 rotation ciphers running simultaneously so if <code>s</code> is your ciphertext then <code>s !! 0</code>, <code>s !! 15</code>, <code>s !! 30</code>, etc. all have the same rotation cipher. The same is true for <code>s !! 1</code>, <code>s !! 16</code>, etc.</p>
 <p>Write a bash tool</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./vindecoden</span> [ciphertext file] [N]</code></pre>
 <p>which takes a ciphertext file and a length then outputs the plaintext and the password.</p>
