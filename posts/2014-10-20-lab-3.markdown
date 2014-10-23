@@ -68,9 +68,9 @@ if you can decode them.
 
 This is essentially a generalization of the Caesar rotation
 cipher.  This cipher is contained in [c2.txt](../fls/c2.txt) and the password used
-is of length 16.  This means that you have 16 rotation ciphers
+is of length 15.  This means that you have 15 rotation ciphers
 running simultaneously so if `s` is your ciphertext then
-`s !! 0`, `s !! 16`, `s !! 32`, etc. all have the same rotation cipher.
+`s !! 0`, `s !! 15`, `s !! 30`, etc. all have the same rotation cipher.
 The same is true for `s !! 1`, `s !! 17`, etc.
 
 Write a bash tool
