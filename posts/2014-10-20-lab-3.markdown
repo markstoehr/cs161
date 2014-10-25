@@ -186,7 +186,7 @@ which perform the first two tasks.  For the extra-credit task
 you will turn in `vindecode.hs`.  Grading will be based on whether
 your files can decode the ciphertexts and whether the code clearly 
 demonstrates how you did it.  Save your programs into a folder
-`lab2` within your subversion repository.
+`lab3` within your subversion repository.
 
 Your code should also include some code for your n-gram counting functions.  Make sure that you have the functions `treeInsert` and `treeCount` implemented with the appropriate type signatures.
 
