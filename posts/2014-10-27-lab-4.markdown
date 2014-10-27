@@ -105,7 +105,7 @@ getLine :: IO String
 so `getLine` has type `IO String`.  `simpleParseExpr` will have type signature `String -> Int` so it cannot naively be used.  
 To use `simpleParseExpr` in a
 `do` block you will most likely want to use `fmap` and `show` (think about the exposition on types and functors in class).  
-The solution should be not add to the line count of a simple program that prompts the user for input and then prints it out.
+The solution should be not add to the line count of a simple program that prompts the user for an input string and then prints the string out.
 
 
 
