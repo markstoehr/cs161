@@ -105,6 +105,17 @@ getLine :: IO String
 so `getLine` has type `IO String`.  `simpleParseExpr` will have type signature `String -> Int` so it cannot naively be used.  
 To use `simpleParseExpr` in a
 `do` block you will most likely want to use `fmap` and `show` (think about the exposition on types and functors in class).  
+Think carefully about the type signatures. Open up a `ghci` session and you'll see:
+
+```haskell
+*Main> :t show
+show :: Show a => a -> String
+*Main> :t fmap
+fmap :: Functor f => (a -> b) -> f a -> f b
+```
+
+To use `fmap` you have to pick a type for three type variables: `f`, `a`, and `b`. Think about what `f` is going to be in
+an `IO` context.  Think about the other type variables.  What is the function `a -> b` going to be?
 The solution should be not add to the line count of a simple program that prompts the user for an input string and then prints the string out.
 
 
