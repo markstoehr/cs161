@@ -77,7 +77,7 @@
 <li>Turn the tokens into an <code>ArithExpr</code>. Here <code>read</code> is useful when applied to integers. Thinking about arithmetic it makes sense to split the list at the operator of least precedence and then recurse on the elements.</li>
 </ol>
 <h3 id="tokens-to-arithexpr">Tokens to <code>ArithExpr</code></h3>
-<p>Expanding on the third step a little more: think about the expression <code>4*3+4</code> which should be broken up into <code>4*3</code>, <code>+</code>, <code>4</code>. The function <code>break</code> will be useful for this. I called my function that does this <code>buildExpr</code> and in the above example <code>buildExpr</code> would be recursively applied so you would get <code>buildExpr ['4','*','3']</code>. Use</p>
+<p>Expanding on the third step a little more: think about the expression <code>4*3+4</code> which should be broken up into <code>4*3</code>, <code>+</code>, <code>4</code>. The function <code>break</code> will be useful for this. I called my function that does this <code>buildExpr</code> and in the above example <code>buildExpr</code> would be recursively applied so you would get <code>buildExpr [&quot;4&quot;,&quot;*&quot;,&quot;-32&quot;]</code>. Use</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">error <span class="st">&quot;Informative Error Message&quot;</span></code></pre>
 <p>as the result of functions that end up with a parsing error (i.e. an ill-formed input). The error message should be replaced with something informative.</p>
 <h2 id="user-input">User Input</h2>

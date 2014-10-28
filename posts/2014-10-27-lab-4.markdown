@@ -82,7 +82,7 @@ the input the following steps are recommended:
 
 Expanding on the third step a little more: think about the expression `4*3+4` which should be broken
 up into `4*3`, `+`, `4`. The function `break` will be useful for this.  I called my function that does this
-`buildExpr` and in the above example `buildExpr` would be recursively applied so you would get `buildExpr ['4','*','3']`.
+`buildExpr` and in the above example `buildExpr` would be recursively applied so you would get `buildExpr ["4","*","-32"]`.
 Use
 ```haskell
 error "Informative Error Message"
