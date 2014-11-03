@@ -53,7 +53,7 @@ require some cleverness with `takeWhile` and `dropWhile`.
 
 If we want to display the expressions in a succinct manner. We
 need an operator that will put like terms with like terms so we
-don't display "3*x + 5*x" but rather "15*x".
+don't display `13*x + 5*x` but rather `15*x`.
 
 7. Implement a `collect` function which takes `VRArithExpr` and outputs a `PolyExpr` where `PolyExpr` is a data structure that represents an expression with variables in lowest terms so that all you have are variables, their coefficients, their powers, and the constant term.  It is up to you to design this expression.  Doing so will require another algebraic data type but you can often implement things using the original `eval` function.
 

@@ -66,7 +66,7 @@ In order to work with rational expressions you’ll need to be able to read them
 <li>Write a function to parse strings similar to “7/8 * x” into <code>VRArithExpr</code>. We do not allow division to directly take place on variables.</li>
 </ol>
 <h2 id="implementing-collect">Implementing Collect</h2>
-<p>If we want to display the expressions in a succinct manner. We need an operator that will put like terms with like terms so we don’t display “3<em>x + 5</em>x” but rather “15*x“.</p>
+<p>If we want to display the expressions in a succinct manner. We need an operator that will put like terms with like terms so we don’t display <code>13*x + 5*x</code> but rather <code>15*x</code>.</p>
 <ol start="7" style="list-style-type: decimal">
 <li>Implement a <code>collect</code> function which takes <code>VRArithExpr</code> and outputs a <code>PolyExpr</code> where <code>PolyExpr</code> is a data structure that represents an expression with variables in lowest terms so that all you have are variables, their coefficients, their powers, and the constant term. It is up to you to design this expression. Doing so will require another algebraic data type but you can often implement things using the original <code>eval</code> function.</li>
 </ol>
