@@ -64,7 +64,7 @@ Once you have a `collect` expression you should be able to pretty-print the inpu
 
 ## Extra Credit
 
-9. Make all of the above work but with parentheses.
+9. Make all of the above work but with parentheses.  Allow division between variables.
 
 ## What to turn in
 
