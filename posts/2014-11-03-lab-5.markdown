@@ -29,7 +29,7 @@ The trick is to use recursion.
 ## Arithmetic with rational numbers
 
 Adding rational numbers requires thinking about the bases of the
-two rational numbers again.  In particular when adding $$ \frac{a}{b} + \frac{c}{d} $$ the base of the result will be the least common multiple of $b$ and $d$.  Fortunately, with a small tweak this can be computed using the function designed in exercise 3.
+two rational numbers again.  In particular when adding $$ \frac{a}{b} + \frac{c}{d} $$ the base of the result will be the least common multiple of $b$ and $d$.  Fortunately, with a small tweak this can be computed using the function designed in exercise 3.  Assume that division `/` is more tightly binding than `+` or `*`. So `2+5/3` should be `11/3`.
 
 3. Implement a function for adding rational numbers together that preserves their being in lowest form. Add a test to ensure that your function works correctly.
 
@@ -58,9 +58,9 @@ don't display "3*x + 5*x" but rather "15*x".
 7. Implement a `collect` function which takes `VRArithExpr` and outputs a `PolyExpr` where `PolyExpr` is a data structure that represents an expression with variables in lowest terms so that all you have are variables, their coefficients, their powers, and the constant term.  It is up to you to design this expression.  Doing so will require another algebraic data type but you can often implement things using the original `eval` function.
 
 Once you have a `collect` expression you should be able to pretty-print the input expression.  Pretty-print here means showing the polynomial expanded into individual terms (no need to worry about factorization).  So something like this:
-`2x+5/3*y^2 + x*y`.
+`2*x+5/3*y^2 + x*y`.
 
-8. Print the expression back to the user in a pretty-print form.  Include some tests that this works.
+8. Print the expression back to the user in a pretty-print form.  Include some tests that this works.  You will want to treat `x*y` the same as `y*x` so you should have some data type that represents a product of variables and keeps the product of variables sorted so that way you can collect easily and find like terms.  A useful function is `sortBy` and using `ord` you can implement a lexicographic ordering over strings.  You will find that strings by default have a lexicographic ordering. You may assume variable are all lower-case characters.
 
 ## Extra Credit
 
