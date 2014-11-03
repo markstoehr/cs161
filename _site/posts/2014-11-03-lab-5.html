@@ -70,7 +70,7 @@ In order to work with rational expressions you’ll need to be able to read them
 <ol start="7" style="list-style-type: decimal">
 <li>Implement a <code>collect</code> function which takes <code>VRArithExpr</code> and outputs a <code>PolyExpr</code> where <code>PolyExpr</code> is a data structure that represents an expression with variables in lowest terms so that all you have are variables, their coefficients, their powers, and the constant term. It is up to you to design this expression. Doing so will require another algebraic data type but you can often implement things using the original <code>eval</code> function.</li>
 </ol>
-<p>Once you have a <code>collect</code> expression you should be able to pretty-print the input expression</p>
+<p>Once you have a <code>collect</code> expression you should be able to pretty-print the input expression. Pretty-print here means showing the polynomial expanded into individual terms (no need to worry about factorization). So something like this: <code>2x+5/3*y^2 + x*y</code>.</p>
 <ol start="8" style="list-style-type: decimal">
 <li>Print the expression back to the user in a pretty-print form. Include some tests that this works.</li>
 </ol>
