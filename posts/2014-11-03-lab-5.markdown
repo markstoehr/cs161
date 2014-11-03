@@ -39,7 +39,7 @@ Multipling rational numbers is straightforward:
 
 ## Including Variables
 
-We will now use applicative functors to handle variables. We construct
+We construct
 a type `VRArithExpr` which will also allow variables.
 
 5. Implement `VRArithExpr` to include variables.  Variables need to be able to be added and multiplied together.  The basic data associated with a variable should be a string for the variable name.
