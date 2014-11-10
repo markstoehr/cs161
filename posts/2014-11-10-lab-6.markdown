@@ -1,5 +1,5 @@
 --------
-title: Lab 5: Using Randomness
+title: Lab 6: Using Randomness
 --------
 
 # Requirements for the lab:
@@ -170,10 +170,10 @@ See `RandState.hs` to see how `runRandom` is impemented.
 a` that is like `rand`, but generates numbers in a specified
 range. Use the function `randomR :: RandomGen g => (a, a) -> g -> (a,
 g)` in `System.Random`. You can copy and paste the definition of `rand`
-from `RandState.hs` as a starting point. Put this in `rand.hs` (as with all the other exercises).
+from `RandState.hs` as a starting point. Put this in `rand.hs` (as with all the other exercises).  Include a test that the function outputs within the specified range.
 
 4. Using `randR` implement a function `rollTwoDice` which generates a random
-sum of two dice (so between `2` and `12`).  Choose the appropriate type signature.
+sum of two dice (so between `2` and `12`).  Choose the appropriate type signature.  Include a test to show that it outputs the right proportions (you will want to run the function multiple times).
 
 
 ## Shuffling Cards
@@ -209,5 +209,48 @@ all orderings of the cards should be equally likely.
 
 6. Implement a function `shuffleDeck` which takes a list of playing cards, `[PlayingCard]`. Test that it returns random permutations.
 
-7. Implement a function `shuffleADeck` which generates and output of a shuffle of 52 cards.
+7. Implement a function `shuffleADeck` which generates and output of a shuffle of 52 cards. Test that it outputs that many cards.
+
+## Extra Credit: Approximating Pi
+
+ We will shift gears a bit in this final part of the lab to show another application of randomness. Randomness can be a powerful tool if we want to work out approximate solutions to problems. There is a general class of computational methods called Monte-Carlo methods that are widely used.
+
+One simple example of a problem that can be solved with a Monte-Carlo method is calculating the approximate value of π. 
+
+Look to the right at the diagram of a circle circumscribed in a square. <img src="../fls/pi-montecarlo.png" style="float: right; margin: 10px"> 
+Note that
+the ratio of the area of the circle to the square is `(π * 12)/(22) =
+π/4`. If we then choose points at random in the square (ie. with `x` and
+`y` values in the interval `[-1, 1]`), then we can approximate π by
+checking which proportion fall within the circle. The more points are
+randomly chosen, the closer the ratio with converge to `π/4`. You can
+easily check to see if the point is within the circle - less than `1`
+unit away from `(0,0)`.
+
+Here is a template for the pi approximation code:
+```haskell
+-- Succeed if randomly chosen point from square is inside circumscribed circle 
+piTrial :: RandState Bool
+
+-- Perform n trials of the RandState function provided as the second argument,
+--  and give back the number of successful trials
+-- Hint: To perform the n trials, you can either use sequence from 
+--       Control.Monad, or you can use recursion 
+bernoulliTrials :: Int -> RandState Bool -> RandState Int
+
+-- Approximate pi using n randomly chosen points
+-- Hint: You will probably need to use the fromIntegral function to
+--       convert Int into Double.
+approxPi :: Int -> RandState Double
+```
+
+`approxPi` should be implemented so that we can have the following interactive session
+
+```haskell
+> g <- newStdGen
+> runRandom (approxPi 10000) g
+3.1588
+```
+
+8. Implement `approxPi` as above.  Implement `approxPiIO` that makes it available for input and output.  Implement a test that shows that the output expression, indeed, is an approximation of `π`
 

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>CS161 Labs - Lab 5: Using Randomness</title>
+        <title>CS161 Labs - Lab 6: Using Randomness</title>
         <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	<link rel="stylesheet" type="text/css" href="../css/syntax.css" />
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -22,7 +22,7 @@
         </div>
 
         <div id="content">
-            <h1>Lab 5: Using Randomness</h1>
+            <h1>Lab 6: Using Randomness</h1>
 
             <div class="info">
     Posted on November 10, 2014
@@ -115,8 +115,8 @@ runState<span class="ot"> testState ::</span> <span class="dt">String</span> <sp
 <span class="fl">0.5556050250436191</span></code></pre>
 <p>See <code>RandState.hs</code> to see how <code>runRandom</code> is impemented.</p>
 <ol start="3" style="list-style-type: decimal">
-<li><p>Implement a new function <code>randR :: Random a =&gt; (a, a) -&gt; RandState a</code> that is like <code>rand</code>, but generates numbers in a specified range. Use the function <code>randomR :: RandomGen g =&gt; (a, a) -&gt; g -&gt; (a, g)</code> in <code>System.Random</code>. You can copy and paste the definition of <code>rand</code> from <code>RandState.hs</code> as a starting point. Put this in <code>rand.hs</code> (as with all the other exercises).</p></li>
-<li><p>Using <code>randR</code> implement a function <code>rollTwoDice</code> which generates a random sum of two dice (so between <code>2</code> and <code>12</code>). Choose the appropriate type signature.</p></li>
+<li><p>Implement a new function <code>randR :: Random a =&gt; (a, a) -&gt; RandState a</code> that is like <code>rand</code>, but generates numbers in a specified range. Use the function <code>randomR :: RandomGen g =&gt; (a, a) -&gt; g -&gt; (a, g)</code> in <code>System.Random</code>. You can copy and paste the definition of <code>rand</code> from <code>RandState.hs</code> as a starting point. Put this in <code>rand.hs</code> (as with all the other exercises). Include a test that the function outputs within the specified range.</p></li>
+<li><p>Using <code>randR</code> implement a function <code>rollTwoDice</code> which generates a random sum of two dice (so between <code>2</code> and <code>12</code>). Choose the appropriate type signature. Include a test to show that it outputs the right proportions (you will want to run the function multiple times).</p></li>
 </ol>
 <h2 id="shuffling-cards">Shuffling Cards</h2>
 <p>In this section we write code to randomly shuffle a deck of cards</p>
@@ -143,7 +143,32 @@ fullCardDeck <span class="fu">=</span> [ <span class="dt">PlayingCard</span> s v
 <p>This is a basic function that can help you shuffle a deck. A common interview question is to implement deck shuffling. A deck shuffling function should induce a uniform probability distribution over all permutations: i.e. all orderings of the cards should be equally likely.</p>
 <ol start="6" style="list-style-type: decimal">
 <li><p>Implement a function <code>shuffleDeck</code> which takes a list of playing cards, <code>[PlayingCard]</code>. Test that it returns random permutations.</p></li>
-<li><p>Implement a function <code>shuffleADeck</code> which generates and output of a shuffle of 52 cards.</p></li>
+<li><p>Implement a function <code>shuffleADeck</code> which generates and output of a shuffle of 52 cards. Test that it outputs that many cards.</p></li>
+</ol>
+<h2 id="extra-credit-approximating-pi">Extra Credit: Approximating Pi</h2>
+<p>We will shift gears a bit in this final part of the lab to show another application of randomness. Randomness can be a powerful tool if we want to work out approximate solutions to problems. There is a general class of computational methods called Monte-Carlo methods that are widely used.</p>
+<p>One simple example of a problem that can be solved with a Monte-Carlo method is calculating the approximate value of π.</p>
+<p>Look to the right at the diagram of a circle circumscribed in a square. <img src="../fls/pi-montecarlo.png" style="float: right; margin: 10px"> Note that the ratio of the area of the circle to the square is <code>(π * 12)/(22) = π/4</code>. If we then choose points at random in the square (ie. with <code>x</code> and <code>y</code> values in the interval <code>[-1, 1]</code>), then we can approximate π by checking which proportion fall within the circle. The more points are randomly chosen, the closer the ratio with converge to <code>π/4</code>. You can easily check to see if the point is within the circle - less than <code>1</code> unit away from <code>(0,0)</code>.</p>
+<p>Here is a template for the pi approximation code:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Succeed if randomly chosen point from square is inside circumscribed circle </span>
+<span class="ot">piTrial ::</span> <span class="dt">RandState</span> <span class="dt">Bool</span>
+
+<span class="co">-- Perform n trials of the RandState function provided as the second argument,</span>
+<span class="co">--  and give back the number of successful trials</span>
+<span class="co">-- Hint: To perform the n trials, you can either use sequence from </span>
+<span class="co">--       Control.Monad, or you can use recursion </span>
+<span class="ot">bernoulliTrials ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">RandState</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">RandState</span> <span class="dt">Int</span>
+
+<span class="co">-- Approximate pi using n randomly chosen points</span>
+<span class="co">-- Hint: You will probably need to use the fromIntegral function to</span>
+<span class="co">--       convert Int into Double.</span>
+<span class="ot">approxPi ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">RandState</span> <span class="dt">Double</span></code></pre>
+<p><code>approxPi</code> should be implemented so that we can have the following interactive session</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> g <span class="ot">&lt;-</span> newStdGen
+<span class="fu">&gt;</span> runRandom (approxPi <span class="dv">10000</span>) g
+<span class="fl">3.1588</span></code></pre>
+<ol start="8" style="list-style-type: decimal">
+<li>Implement <code>approxPi</code> as above. Implement <code>approxPiIO</code> that makes it available for input and output. Implement a test that shows that the output expression, indeed, is an approximation of <code>π</code></li>
 </ol>
 
         </div>
