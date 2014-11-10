@@ -12,7 +12,7 @@ Download one of these files:
 and build off of that source code.  The code turned in
 should be able to complete the exercises listed in this
 assignment. For each function requested include a comment
-above it indicating which exercise in the lab the function corresponds to.
+above it indicating which exercise in the lab the function corresponds to.  The code should be
 Each function that is asked to be tested should be tested.  A test
 looks like this:
 
@@ -205,7 +205,9 @@ should pick a random card out of the list, return the card and the list with the
 
 This is a basic function that can help you shuffle a deck.  A common interview question is to implement
 deck shuffling.  A deck shuffling function should induce a uniform probability distribution over all permutations: i.e.
-all orderings of the cards should be equally likely.
+all orderings of the cards should be equally likely.  You will want
+to write this recursively, handling the base case for an empty deck,
+and then using an inductive step: using `removeCard` and then recursing.
 
 6. Implement a function `shuffleDeck` which takes a list of playing cards, `[PlayingCard]`. Test that it returns random permutations.
 
@@ -253,4 +255,8 @@ approxPi :: Int -> RandState Double
 ```
 
 8. Implement `approxPi` as above.  Implement `approxPiIO` that makes it available for input and output.  Implement a test that shows that the output expression, indeed, is an approximation of `π`
+
+# What to Submit
+
+
 

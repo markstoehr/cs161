@@ -35,7 +35,7 @@
 <li><a href="../fls/RandState.zip">RandState.zip</a></li>
 <li><a href="../fls/RandState.tar.gz">RandState.tar.gz</a></li>
 </ul>
-<p>and build off of that source code. The code turned in should be able to complete the exercises listed in this assignment. For each function requested include a comment above it indicating which exercise in the lab the function corresponds to. Each function that is asked to be tested should be tested. A test looks like this:</p>
+<p>and build off of that source code. The code turned in should be able to complete the exercises listed in this assignment. For each function requested include a comment above it indicating which exercise in the lab the function corresponds to. The code should be Each function that is asked to be tested should be tested. A test looks like this:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">test5 <span class="fu">=</span> f x y z <span class="fu">==</span> output</code></pre>
 <p>where <code>x</code>,<code>y</code>,<code>z</code> are hard-coded inputs and <code>output</code> is a known output. In the case where the test. The tests, however, are generally going to be for monadic code which means that testing should be written with monadic code. The first exercise is to do this</p>
 <p>Consider the example function included in <code>stateExample2</code> and it is meant to output a random list of a specified length. Your first task to to test this:</p>
@@ -140,7 +140,7 @@ fullCardDeck <span class="fu">=</span> [ <span class="dt">PlayingCard</span> s v
 <ol start="5" style="list-style-type: decimal">
 <li>Implement a function <code>removeCard</code>, which will be monadic. Given a list of Playing Cards, it should pick a random card out of the list, return the card and the list with the card removed (as a tuple potentially). Test that this functions correctly</li>
 </ol>
-<p>This is a basic function that can help you shuffle a deck. A common interview question is to implement deck shuffling. A deck shuffling function should induce a uniform probability distribution over all permutations: i.e. all orderings of the cards should be equally likely.</p>
+<p>This is a basic function that can help you shuffle a deck. A common interview question is to implement deck shuffling. A deck shuffling function should induce a uniform probability distribution over all permutations: i.e. all orderings of the cards should be equally likely. You will want to write this recursively, handling the base case for an empty deck, and then using an inductive step: using <code>removeCard</code> and then recursing.</p>
 <ol start="6" style="list-style-type: decimal">
 <li><p>Implement a function <code>shuffleDeck</code> which takes a list of playing cards, <code>[PlayingCard]</code>. Test that it returns random permutations.</p></li>
 <li><p>Implement a function <code>shuffleADeck</code> which generates and output of a shuffle of 52 cards. Test that it outputs that many cards.</p></li>
@@ -170,6 +170,7 @@ fullCardDeck <span class="fu">=</span> [ <span class="dt">PlayingCard</span> s v
 <ol start="8" style="list-style-type: decimal">
 <li>Implement <code>approxPi</code> as above. Implement <code>approxPiIO</code> that makes it available for input and output. Implement a test that shows that the output expression, indeed, is an approximation of <code>π</code></li>
 </ol>
+<h1 id="what-to-submit">What to Submit</h1>
 
         </div>
         <div id="footer">
