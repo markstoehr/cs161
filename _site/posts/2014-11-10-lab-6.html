@@ -50,7 +50,7 @@
 <p>A common requirement for computer programs is that there should be some randomness to the behaviour of the program. For this you need a random number generator, which can generate an unlimited sequence of random numbers. Typically this these numbers are not truly random, but pseudo-random.</p>
 <p>A pseudo-random number generator generates a sequence of numbers based on an initial state s using a function f. I.e. the states are s1 = f(s), s2 = f(f(s)), s3 = f(f(f(s))), etc. Each random number is then derived from each of these intermediate states (typically by taking a small proportion of the 0’s and 1’s from the state).</p>
 <p>f has to be chosen so that subsequent states have no obvious correlation, so for most intents and purposes the numbers generated are random, but the sequence of numbers is in fact entirely determined by the initial state s.</p>
-<p>In many programming language, the random number generator state is hidden from the programmer, but because of the purity of Haskell, the random number generator state must explicitly be passed through your program.</p>
+<p>In many programming languages, the random number generator state is hidden from the programmer, but because of the purity of Haskell, the random number generator state must explicitly be passed through your program.</p>
 <p>The following ghc session shows how the function random from the System.Random module can be used.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">import </span><span class="dt">System.Random</span>
 <span class="dt">Prelude</span> <span class="dt">System.Random</span><span class="fu">&gt;</span> <span class="fu">:</span>t random

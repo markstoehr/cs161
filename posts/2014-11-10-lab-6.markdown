@@ -45,7 +45,7 @@ A pseudo-random number generator generates a sequence of numbers based on an ini
 
 f has to be chosen so that subsequent states have no obvious correlation, so for most intents and purposes the numbers generated are random, but the sequence of numbers is in fact entirely determined by the initial state s.
 
-In many programming language, the random number generator state is hidden from the programmer, but because of the purity of Haskell, the random number generator state must explicitly be passed through your program. 
+In many programming languages, the random number generator state is hidden from the programmer, but because of the purity of Haskell, the random number generator state must explicitly be passed through your program. 
 
  The following ghc session shows how the function random from the System.Random module can be used. 
 
