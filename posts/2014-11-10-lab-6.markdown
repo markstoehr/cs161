@@ -173,7 +173,7 @@ g)` in `System.Random`. You can copy and paste the definition of `rand`
 from `RandState.hs` as a starting point. Put this in `rand.hs` (as with all the other exercises).  Include a test that the function outputs within the specified range.
 
 4. Using `randR` implement a function `rollTwoDice` which generates a random
-sum of two dice (so between `2` and `12`).  Choose the appropriate type signature.  Include a test to show that it outputs the right proportions (you will want to run the function multiple times).
+sum of two dice (so between `2` and `12`).  Choose the appropriate type signature.  Include a test to show that it outputs the right proportions (you will want to run the function multiple times).  The right proportions here means that the empirical frequencies of the dice rolls should match the predicted distribution.  Testing this requires computing probabilities of dice rolls.
 
 
 ## Shuffling Cards

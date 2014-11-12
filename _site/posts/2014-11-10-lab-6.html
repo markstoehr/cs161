@@ -116,7 +116,7 @@ runState<span class="ot"> testState ::</span> <span class="dt">String</span> <sp
 <p>See <code>RandState.hs</code> to see how <code>runRandom</code> is impemented.</p>
 <ol start="3" style="list-style-type: decimal">
 <li><p>Implement a new function <code>randR :: Random a =&gt; (a, a) -&gt; RandState a</code> that is like <code>rand</code>, but generates numbers in a specified range. Use the function <code>randomR :: RandomGen g =&gt; (a, a) -&gt; g -&gt; (a, g)</code> in <code>System.Random</code>. You can copy and paste the definition of <code>rand</code> from <code>RandState.hs</code> as a starting point. Put this in <code>rand.hs</code> (as with all the other exercises). Include a test that the function outputs within the specified range.</p></li>
-<li><p>Using <code>randR</code> implement a function <code>rollTwoDice</code> which generates a random sum of two dice (so between <code>2</code> and <code>12</code>). Choose the appropriate type signature. Include a test to show that it outputs the right proportions (you will want to run the function multiple times).</p></li>
+<li><p>Using <code>randR</code> implement a function <code>rollTwoDice</code> which generates a random sum of two dice (so between <code>2</code> and <code>12</code>). Choose the appropriate type signature. Include a test to show that it outputs the right proportions (you will want to run the function multiple times). The right proportions here means that the empirical frequencies of the dice rolls should match the predicted distribution. Testing this requires computing probabilities of dice rolls.</p></li>
 </ol>
 <h2 id="shuffling-cards">Shuffling Cards</h2>
 <p>In this section we write code to randomly shuffle a deck of cards</p>
