@@ -2,8 +2,8 @@ module MancalaBoard (MancalaBoard, Player, initial, getCurPlayer,
             getBoardData, numCaptured, move, allowedMoves, isAllowedMove,
             gameOver, winners) where
 
-import List -- for List.elemIndex
-import Maybe -- for List.elemIndex
+import Data.List -- for List.elemIndex
+import Data.Maybe -- for List.elemIndex
 
 {-
  - The stones on a Mancala board are simply recorded as a list of Ints.  The
@@ -25,7 +25,7 @@ numPlayers = length allPlayers
 
 
 playerNum :: Player -> Int
-playerNum p = fromJust $ List.elemIndex p allPlayers
+playerNum p = fromJust $ Data.List.elemIndex p allPlayers
 
 
 playerWithNum :: Int -> Player
@@ -180,7 +180,7 @@ move1 board i = MancalaBoardImpl updatedBoard nextPlayer' where
 
 {- Second approach: use pickupStones to recursively go around board -}
 -- assumes the move i is legal -- it's up to the user of MancalaBoard to check this first!!
-move2 mancala i = MancalaBoardImpl newBoardData newPlayer where
+move mancala i = MancalaBoardImpl newBoardData newPlayer where
                      boardData = getBoardData mancala
                      curPlayer = getCurPlayer mancala
                      curPlayerStoreIndex = indexForPlayerStore curPlayer
