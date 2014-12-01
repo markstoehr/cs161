@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CS161 Labs - Lab 9: Mancala AI</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+	<link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">CS161 Labs</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Lab 9: Mancala AI</h1>
+
+            <div class="info">
+    Posted on December  1, 2014
+    
+</div>
+
+<p>For the final lab we are going to build a simple computer Mancala system using a simple look-ahead strategy.</p>
+<p>Start with the following files: <a href="../fls/Mancala.hs">Mancala.hs</a>, <a href="../fls/MancalaBoard.hs">MancalaBoard.hs</a>, and <a href="../fls/MancalaAI.hs">MancalaAI.hs</a>. These provide an essentially complete solution to last week’s lab, and more: Mancala.hs assumes PlayerB is the computer<br /> player, and has been modified accordingly. We’ve provided you with the simplest possible AI in MancalaAI.hs.</p>
+<p>You should write all code related to the AI in MancalaAI.hs. You may modify this file however you like, but you may not modify the module declaration; in particular, the only function this module provides should be <code>aiNextMove</code> (which you should modify). If you want to get your AI working with your code from last week (instead of the code we’ve provided above), that’s great, but please do it <strong>after having written your AI</strong>. We provided you with the above code so that you could focus this week on writing the AI.</p>
+<h2 id="writing-the-ai">Writing the AI</h2>
+<p>Today we’re going to start with a basic “tree lookahead” AI. At the base of this is a heuristic score, which is something you get to make up. The idea of a heuristic score is that it is a number that is very easy to compute given a MancalaBoard, which roughly says how well a given player is doing. The heuristic score might have a signature something like this:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">heuristicScore ::</span> <span class="dt">Player</span> <span class="ot">-&gt;</span> <span class="dt">MancalaBoard</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> </code></pre>
+<p>Usually heuristic scores are very simple. Some reasonable approaches might be to have the heuristic score be:</p>
+<ul>
+<li>The number of stones in the player’s store</li>
+<li>The player’s score (number of stones in their store plus number of stones in their pits)<br /></li>
+<li>The player’s score minus the opponent’s score</li>
+</ul>
+<p>one of the main features</p>
+<p>Think of the heuristic score as a “depth 0” tree lookahead: it evaluates how well the player is doing without looking ahead any moves. In a sense this is the base case of the lookahead recursion. In other words, depth 0 lookahead simply consider all available moves and takes the move resulting in the best heuristic score.<br />which can be compiled from a <code>playMancala.hs</code> file.</p>
+<p>Think of the heuristic score as a “depth 0” tree lookahead: it evaluates how well the player is doing without looking ahead any moves. In a sense this is the base case of the lookahead recursion. In other words, depth 0 lookahead simply consider all available moves and takes the move resulting in the best heuristic score.</p>
+<p>Depth <code>d</code> lookahead considers all available moves, and takes the move resulting in the best position. Now, instead of determining the best position simply by applying the heuristic score, the best position is determined by looing ahead d moves. That is, for each available move, it uses lookahead of depth d-1 to determine what the <em>next</em> move would be, and then evaluates that move with depth <code>d-1</code> lookahead.</p>
+<p>There are many ways to organize this code, but I found the following organization useful. If this doesn’t make sense to you, or you want to organize your code differently, please do! This is just a little something to get you started.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">aiNextMove ::</span> <span class="dt">MancalaBoard</span> <span class="ot">-&gt;</span> <span class="dt">Move</span>
+aiNextMove mancala <span class="fu">=</span> lookahead mancala <span class="dv">0</span> <span class="co">-- slowly increase the depth</span>
+
+<span class="ot">evalPosition ::</span> <span class="dt">Player</span> <span class="ot">-&gt;</span> <span class="dt">MancalaBoard</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+evalPosition player mancala <span class="dv">0</span>     <span class="fu">=</span> <span class="co">-- heuristic score goes here</span>
+evalPosition player mancala depth <span class="fu">=</span> <span class="co">-- recursive call, based on depth d-1 lookahead, goes here</span>
+
+<span class="ot">lookahead ::</span> <span class="dt">MancalaBoard</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Move</span>
+lookahead mancala depth <span class="fu">=</span> <span class="co">-- uses evalPosition at the same depth to determine the next move to make</span></code></pre>
+<h2 id="extending-your-ai">Extending your AI</h2>
+<p>In addition to choosing a good heuristic function, you can “hard code” some moves. For example, if there are k stones in the k-th pit from your store, picking up that pit guarantees that the last stone lands in your store and you get an extra move. (This is not always the best move, but it may help to take this into account.) And there are many other clever things you can do.</p>
+<p>Note that, once you hard code some moves like this, you are essentially forcing those moves. This means that you may be able to increase the depth of your lookahead without it taking too long.</p>
+<h2 id="compiling-your-program">Compiling Your Program</h2>
+<p>You may want to compile your code to make it run faster. Compiling multi-file programs with ghc is a little bit involved. The following sequence of commands should do the job.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">stoehr@feverfew</span>:~/TA/cs161/labs/lab9$ ghc -c MancalaBoard.hs 
+<span class="kw">stoehr@feverfew</span>:~/TA/cs161/labs/lab9$ ghc -c MancalaAI.hs 
+<span class="kw">stoehr@feverfew</span>:~/TA/cs161/labs/lab9$ ghc -o mancala Mancala2.hs MancalaBoard.hs MancalaAI.hs 
+<span class="kw">compilation</span> IS NOT required
+<span class="kw">compilation</span> IS NOT required
+<span class="kw">stoehr@feverfew</span>:~/TA/cs161/labs/lab9$ ./mancala </code></pre>
+<p>Submit an AI implementation as well as a README. Extra-credit will be granted to well-explained and demonstrated extensions to the basic look-ahead strategy.</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>

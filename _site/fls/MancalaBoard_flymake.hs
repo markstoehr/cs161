@@ -1,18 +1,13 @@
-module MancalaBoard (MancalaBoard, Player, initial, getCurPlayer,
-            getBoardData, numCaptured, move, allowedMoves, isAllowedMove,
-            gameOver, winners) where
+module MancalaBoard (MancalaBoard, Player, initial, getCurPlayer, getBoardData, numCaptured, move, allowedMoves, allowedMovesFor, whoWins, allPlayers, argmaxes, playerSide, playerScore, nextPlayer) where
 
-import Data.List as List -- for List.elemIndex
-import Data.Maybe as Maybe -- for List.elemIndex
+import Data.List -- for List.elemIndex
+import Data.Maybe -- for List.elemIndex
 
-{-
- - The stones on a Mancala board are simply recorded as a list of Ints.  The
- -  Ints come in the following order:
- - 1. The boardSize pits belonging to PlayerA
- - 2. The store belonging to PlayerA
- - 3. The boardSize pits belonging to PlayerB
- - 4. The store belonging to PlayerB
- -}
+-- The stones on a Mancala board are simply recorded as a list of Ints.  The Ints come in the following order:
+-- 1. The boardSize pits belonging to PlayerA
+-- 2. The store belonging to PlayerA
+-- 3. The boardSize pits belonging to PlayerB
+-- 4. The store belonging to PlayerB
 
 data MancalaBoard = MancalaBoardImpl [Int] Player
 
@@ -23,110 +18,133 @@ data Player = PlayerA | PlayerB deriving (Eq, Show)
 allPlayers = [PlayerA, PlayerB]
 numPlayers = length allPlayers
 
-
 playerNum :: Player -> Int
-playerNum p = fromJust $ List.elemIndex p allPlayers
-
+playerNum p = fromJust $ Data.List.elemIndex p allPlayers
 
 playerWithNum :: Int -> Player
 playerWithNum i = allPlayers !! i
 
-
 nextPlayer :: Player -> Player
-{- Find the player whose turn is next -}
 nextPlayer p = playerWithNum $ ((playerNum p) + 1) `mod` numPlayers
-
 
 ---- Functions/constants for MancalaBoard ----
 
-{- number of pits on each side -}
-boardSize = 6
-{- number of stones in each pit -}
-startStones = 4
-
-{- the initial mancala board -}
 initial :: MancalaBoard
-initial = MancalaBoardImpl (concat $ take numPlayers (repeat boardSide)) PlayerA
-                        -- One side of board                pit at end
-    where boardSide = take boardSize (repeat startStones) ++ [0]
 
-
-{- return the index of the first pit belonging to a player -}
-indexForFirstPit :: Player -> Int
-indexForFirstPit p = (playerNum p) * (boardSize + 1)
-
-
-{- return the index of the store for that player -}
-indexForPlayerStore :: Player -> Int
-indexForPlayerStore p = boardSize + (indexForFirstPit p)
-
-
-{- return the indices for the pits (without the store) for a player -}
-indicesForPlayerSide :: Player -> [Int]
-indicesForPlayerSide p = [firstPit .. lastPit] where
-    firstPit = indexForFirstPit p
-    lastPit = firstPit + boardSize - 1
-
-
----- Retrieve information about Mancala Board
--- TODO: uncomment these type declarations and implement the functions
-{- return the player who has the current turn -}
+---- getters
 getCurPlayer :: MancalaBoard -> Player
---TODO: replace below line with real definition
-getCurPlayer _ = PlayerA
-
-
-{- return the list of all pits in the board -}
 getBoardData :: MancalaBoard -> [Int]
---TODO: replace below line with real definition
-getBoardData _ = []
+playerSide :: MancalaBoard -> Player -> [Int]
 
+numCaptured :: MancalaBoard -> Player -> Int
 
-{- return the side of the board for a specified player, including the store at
- - the end -}
---TODO: define this function
--- playerSide :: MancalaBoard -> Player -> [Int]
-
-
-{- return the number of captured pieces in specified player's store -}
---TODO: add type and replace below line with real definition
-numCaptured _ _ = 0
-
-
-{- allowedMoves returns a list of valid moves for the current player:
- - ie. the indices of pits which belong to that player, and which contain one
- - or more pieces -}
---TODO: add type and replace below line with real definition
-allowedMoves _ _ = []
-
-
-{- check that a move is valid for the current player -}
---TODO: add type and replace below line with real definition
-isAllowedMove _ _ = False
-
-
-{- We number the pits from 0 to 13 (2 players, 6 pits each and 1 store each)
- - This function takes a board and applies the move where the player selects
- - the numbered pit, giving back an updated board after the move -}
---TODO: add type and replace below line with real definition
-move _ _ = initial
-
-
-{- gameOver checks to see if the game is over (i.e. if one player's side of the
- - board is all empty -}
-gameOver :: MancalaBoard -> Bool
--- TODO: replace below line with real definition
-gameOver _ = False
-
-
-{- winner returns a list of players who have the top score: there will only be 
- - one in the list if there is a clear winner, and none if it is a draw -}
-winners :: MancalaBoard -> [Player]
-winners _ = allPlayers
-
+---- more complex functions
+move :: MancalaBoard -> Int -> MancalaBoard 
+allowedMoves :: MancalaBoard -> [Int]
+allowedMovesFor :: MancalaBoard -> Player -> [Int]
+whoWins :: MancalaBoard -> [Player] -- if the list has more than one Player, it's a tie.
 
 ---- show
+---- Show method due to Alex Stephens.
 instance Show MancalaBoard where
     show (MancalaBoardImpl boardData player) =
-            (show boardData) ++ " " ++ (show player)
+      "                       PlayerB's Side\n\n"++
+      "                12   11   10    9    8    7\n"++
+      "          ____ ____ ____ ____ ____ ____ ____ ____\n"++
+      "         |    |    |    |    |    |    |    |    |\n"++
+      "         |    | "
+           ++(doubleDigit$boardData!!12)++
+      " | "++(doubleDigit$boardData!!11)++
+      " | "++(doubleDigit$boardData!!10)++
+      " | "++(doubleDigit$boardData!!9)++
+      " | "++(doubleDigit$boardData!!8)++
+      " | "++(doubleDigit$boardData!!7)++        " |    |\n"++
+      "PlayerB's| "++(doubleDigit$boardData!!13)++
+      " |____|____|____|____|____|____| "++(doubleDigit$boardData!!6)++
+      " |PlayerA's\n"++
+      "   Pit   |    |    |    |    |    |    |    |    |   Pit\n"++
+      "         |    | "
+           ++(doubleDigit$boardData!!0)++
+      " | "++(doubleDigit$boardData!!1)++
+      " | "++(doubleDigit$boardData!!2)++
+      " | "++(doubleDigit$boardData!!3)++
+      " | "++(doubleDigit$boardData!!4)++
+      " | "++(doubleDigit$boardData!!5)++        " |    |\n"++
+      "         |____|____|____|____|____|____|____|____|\n\n"++
+      "                 0    1    2    3    4    5\n\n"++
+      "                       PlayerA's Side\n\n"++
+      (show player)++", it is your turn.\n" where
+        doubleDigit x= case elem x [0..9] of
+                         True->"0"++show x
+                         False->show x
 
+---- some internal helpers ----
+boardSize = 6
+startStones = 4
+
+indexForPlayerStore :: Player -> Int
+indexForPlayerStore player = (playerNum player) * (boardSize + 1) + boardSize
+
+indicesForPlayerSide :: Player -> [Int]
+indicesForPlayerSide player = [bottom .. top] where
+    bottom = (playerNum player) * (boardSize + 1)
+    top = bottom + boardSize - 1
+
+-- assumes vals is not empty
+-- argmax f vals returns the value(s) in vals which maximize(s) the function f.  
+argmaxes :: (Eq a, Ord b) => (a -> b) -> [a] -> [a]
+argmaxes f vals = nub $ foldl (doArgMax f) [(vals !! 0)] vals where
+   doArgMax :: (Ord b) => (a -> b) -> [a] -> a -> [a]
+   doArgMax f (curArgMax:cams) val | f val > f curArgMax = [val]
+                                   | f val == f curArgMax = (val : (curArgMax : cams))
+                                   | otherwise = (curArgMax : cams)
+
+initialPlayerSetup = (take (fromIntegral boardSize) (repeat (fromIntegral startStones))) ++ [0]
+---- end internal helpers ----
+
+initial = MancalaBoardImpl (concat $ take numPlayers (repeat (take boardSize (repeat startStones) ++ [0]))) PlayerA
+
+getCurPlayer (MancalaBoardImpl _ p) = p
+
+getBoardData (MancalaBoardImpl boardData _) = boardData
+
+playerSide (MancalaBoardImpl boardData _) player = [boardData !! i | i <- indicesForPlayerSide player]
+
+numCaptured (MancalaBoardImpl boardData _) player = boardData !! (indexForPlayerStore player)
+
+allowedMovesFor (MancalaBoardImpl boardData _) player = [i | i <- indicesForPlayerSide player, (boardData !! i) /= 0]
+
+allowedMoves mancala = allowedMovesFor mancala (getCurPlayer mancala)
+
+whoWins mancala = argmaxes (playerScore mancala) allPlayers
+
+playerScore :: MancalaBoard -> Player -> Int    
+playerScore mancala p = numCaptured mancala p + sum (playerSide mancala p)
+
+-- assumes the move i is legal -- it's up to the user of MancalaBoard to check this first!!
+move mancala i = MancalaBoardImpl newBoardData newPlayer where
+                     boardData = getBoardData mancala
+                     curPlayer = getCurPlayer mancala
+                     curPlayerStoreIndex = indexForPlayerStore curPlayer
+                     otherPlayerStoreIndex = indexForPlayerStore (nextPlayer curPlayer)
+                     numStones = boardData !! i
+
+                     midBoardData = fst $ pickupStones boardData i
+                     newBoardData = placeStones midBoardData numStones ((i + 1) `mod` (length boardData)) otherPlayerStoreIndex
+                     newPlayer = if (i + numStones == curPlayerStoreIndex) then curPlayer else (nextPlayer curPlayer)
+
+---- internal helpers for move
+pickupStones :: [Int] -> Int -> ([Int], Int)
+pickupStones boardData 0 = ((0 : (tail boardData)), head boardData)
+pickupStones boardData i = (((head boardData) : (fst rec)), snd rec) where rec = pickupStones (tail boardData) (i-1)
+
+placeStones :: [Int] -> Int -> Int -> Int -> [Int]
+placeStones boardData 0 _ _ = boardData
+placeStones boardData numStones i exclIndex | i == exclIndex = placeStones boardData numStones ((i + 1) `mod` (length boardData)) exclIndex
+                                            | otherwise = placeStones (listIncr boardData i) (numStones - 1) ((i + 1) `mod` (length boardData)) exclIndex
+
+-- listIncr vals idx returns a new list with (vals !! idx) incremented by 1
+listIncr :: [Int] -> Int -> [Int]
+listIncr vals i | i > length vals = listIncr vals (i `mod` length vals)
+                | i == 0 = ((head vals + 1) : (tail vals))
+                | otherwise = (head vals) : (listIncr (tail vals) (i-1))
