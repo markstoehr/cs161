@@ -30,6 +30,9 @@ An example SVN interaction will look like
     svn commit -m "began work on main.hs"     # push your work to the central server
 ```
 
+Remember SVN will only track a file `foo` if you call `svn add food` and it
+SVN will only save changes if you run something like `svn commit -m "worked on food"` after making modifications to foo.
+
 ## Project Layout
 
 These instructions are based [on this page from Haskell.org](http://www.haskell.org/haskellwiki/How_to_write_a_Haskell_program). We aren't going to move to
