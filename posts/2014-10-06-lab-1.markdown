@@ -31,7 +31,18 @@ An example SVN interaction will look like
 ```
 
 Remember SVN will only track a file `foo` if you call `svn add food` and it
-SVN will only save changes if you run something like `svn commit -m "worked on food"` after making modifications to foo.
+SVN will only save changes if you run something like `svn commit -m "worked on food"` after making modifications to foo.  You can confirm that a file `foo` is in the repository by calling
+
+```bash
+svn info foo
+```
+
+or by visiting the Phoenixforge website:
+
+```bash
+https://phoenixforge.cs.uchicago.edu/projects/[cnetid]-cs161-aut-14/repository/show/
+```
+where `[cnetid]` is replaced with your cnetid.
 
 ## Project Layout
 
