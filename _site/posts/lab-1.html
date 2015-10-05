@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CS161 Labs - Lab 1: Simple Reverse Polish Notation Calculator</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+	<link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">CS161 Labs</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Lab 1: Simple Reverse Polish Notation Calculator</h1>
+
+            <div class="info">
+    Posted on August  5, 2015
+    
+</div>
+
+<h2 id="introduction">Introduction</h2>
+<p>Let’s build a calculator, one of the simplest examples of all programming machines. Indeed the first computers in the modern sense of the term were calculators. Like other programming languages they feature a context-free language and thus require a stack. The beauty of the <a href="https://en.wikipedia.org/wiki/Reverse_Polish_notation">reverse Polish notation</a> calculator is that the stack can be defined implicitly by the expression being parsed.</p>
+<p>The main twist for this lab is that we are not going to use Haskell’s internal arithmetic implementation for our calculator. Rather we are going to work with integers as an abstract <a href="http://cmsc-16100.cs.uchicago.edu/2015/Lectures/03-types.php">Algebraic Datatype</a>. This form of integers is similar to the <a href="https://en.wikipedia.org/wiki/Church_encoding">computational coding of integers by Alonzo Church</a>. The actual form of the coding is up to you, but it should be sufficient in order to perform calculations.</p>
+<h2 id="chief-deliverables">Chief Deliverables</h2>
+<ol style="list-style-type: decimal">
+<li>A commandline calculator using <code>foldl</code></li>
+<li>Calculators implemented with an <code>AbstractInteger</code> algebraic datatype</li>
+</ol>
+<p>I have included <a href="../fls/lab1.zip">project skeleton in the files</a> and there is a file <code>Calc.hs</code> which will imports <code>AbstractInteger</code> and uses it to run the calculator. You may run the calculator from the beginning by first compiling:</p>
+<pre><code>mark@nal:~/Projects/cs161/labs/lab1$ ghc Calc</code></pre>
+<p>and then using the command-line tool</p>
+<pre><code>mark@nal:~/Projects/cs161/labs/lab1$ ./Calc 3 4 +</code></pre>
+<p>although you’ll get the following error message:</p>
+<pre><code>Calc: Prelude.undefined.</code></pre>
+<p>The rest of the lab is to get meaningful outputs.</p>
+<h3 id="basic-calculator-operations">Basic Calculator Operations</h3>
+<p>The file you will be modifying is <code>AbstractInteger.hs</code> and at the top of the file is a module declaration which indicates the functions that the file is going to export. A good first task for the lab is to implement at least a few of these functions for an <code>AbstractInteger</code> data type that you will create (more details on that later). I suggest you start with <code>successor</code>, <code>negator</code>, <code>absolute</code>, <code>predecessor</code>, <code>add</code>, and <code>difference</code>. Notice that I have heavily used <code>undefined</code> throughout the file. This is a placeholder that allows me to compile a file without giving full definitions. Its good practice to use this so that you can work with partial implementations of your code. The other thing to note is that I have given the definition to <code>successor</code> and <code>predecessor</code>. These are defined on <code>AbstractNatural</code> so to complete the assignment their definitions will need to be updated for <code>AbstractInteger</code> depending on your implementation choice.</p>
+<h2 id="abstract-natural-numbers">Abstract Natural Numbers</h2>
+<p>To implement <code>AbstractInteger</code> you may use (or build upon, or modify) the implementation of <code>AbstractNatural</code> which shows the natural numbers (in <code>AbstractInteger.hs</code>):</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">AbstractNatural</span> <span class="fu">=</span> <span class="dt">Zero</span> <span class="fu">|</span> <span class="dt">S</span> <span class="dt">AbstractNatural</span>
+  <span class="kw">deriving</span> (<span class="dt">Show</span>)</code></pre>
+<p>This code says that natural numbers come in two varieties: <code>Zero</code>, or the successor of some other natural number <code>S AbstractNatural</code>. To get a feel for the natural numbers you can load the file into the Haskell REPL:</p>
+<pre><code>mark@nal:~/Projects/cs161/labs/lab1$ ghci AbstractInteger</code></pre>
+<p>and you should see the following output:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">[<span class="dv">1</span> <span class="kw">of</span> <span class="dv">1</span>] <span class="dt">Compiling</span> <span class="dt">AbstractInteger</span>  ( AbstractInteger.hs, interpreted )
+<span class="dt">Ok</span>, modules loaded<span class="fu">:</span> <span class="dt">AbstractInteger</span><span class="fu">.</span>
+<span class="fu">*</span><span class="dt">AbstractInteger</span><span class="fu">&gt;</span> </code></pre>
+<p>Note that I have defined a variety of integers:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">zero <span class="fu">=</span> <span class="dt">Zero</span>
+one <span class="fu">=</span> successor zero
+two <span class="fu">=</span> successor one
+three <span class="fu">=</span> successor two
+four <span class="fu">=</span> successor three
+five <span class="fu">=</span> successor four
+six <span class="fu">=</span> successor five
+seven <span class="fu">=</span> successor six
+eight <span class="fu">=</span> successor seven
+nine <span class="fu">=</span> successor eight
+ten <span class="fu">=</span> successor nine</code></pre>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
