@@ -56,6 +56,13 @@
 <pre class="sourceCode haskell"><code class="sourceCode haskell">[<span class="dv">1</span> <span class="kw">of</span> <span class="dv">1</span>] <span class="dt">Compiling</span> <span class="dt">AbstractInteger</span>  ( AbstractInteger.hs, interpreted )
 <span class="dt">Ok</span>, modules loaded<span class="fu">:</span> <span class="dt">AbstractInteger</span><span class="fu">.</span>
 <span class="fu">*</span><span class="dt">AbstractInteger</span><span class="fu">&gt;</span> </code></pre>
+<p>The <code>deriving (Show)</code> allows the REPL to print out meaningful results</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">*</span><span class="dt">AbstractInteger</span><span class="fu">&gt;</span> <span class="dt">Zero</span>
+<span class="dt">Zero</span>
+<span class="fu">*</span><span class="dt">AbstractInteger</span><span class="fu">&gt;</span> <span class="dt">S</span> <span class="dt">Zero</span>
+<span class="dt">S</span> <span class="dt">Zero</span>
+<span class="fu">*</span><span class="dt">AbstractInteger</span><span class="fu">&gt;</span> <span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Zero</span>)
+<span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Zero</span>)</code></pre>
 <p>Note that I have defined a variety of integers:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">zero <span class="fu">=</span> <span class="dt">Zero</span>
 one <span class="fu">=</span> successor zero
