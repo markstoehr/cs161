@@ -43,7 +43,16 @@
 <pre><code>mark@nal:~/Projects/cs161/labs/lab1$ ./Calc 3 4 +</code></pre>
 <p>although you’ll get the following error message:</p>
 <pre><code>Calc: Prelude.undefined.</code></pre>
-<p>The rest of the lab is to get meaningful outputs.</p>
+<p>The rest of the lab is to get meaningful outputs. The functions/calculator operations that need to be implemented are:</p>
+<ol style="list-style-type: decimal">
+<li><code>&quot;abs&quot;</code>, <code>absolute</code></li>
+<li><code>&quot;+&quot;</code>, <code>add</code></li>
+<li><code>&quot;-&quot;</code>, <code>difference</code></li>
+<li><code>&quot;*&quot;</code>, <code>multiply</code> (Note to write multiply you’ll need to do <code>./Calc 3 4 \*</code> to escape the asterisk for proper interpretation)</li>
+<li><code>&quot;%&quot;</code>, <code>modulo</code> more on this later</li>
+<li><code>&quot;/&quot;</code>, <code>divide</code> more on this later</li>
+</ol>
+<p>The calculator should operation on <code>AbstractInteger</code> so that it can output negative numbers but it does not need to accept negative numbers as input.</p>
 <h3 id="basic-calculator-operations">Basic Calculator Operations</h3>
 <p>The file you will be modifying is <code>AbstractInteger.hs</code> and at the top of the file is a module declaration which indicates the functions that the file is going to export. A good first task for the lab is to implement at least a few of these functions for an <code>AbstractInteger</code> data type that you will create (more details on that later). I suggest you start with <code>successor</code>, <code>negator</code>, <code>absolute</code>, <code>predecessor</code>, <code>add</code>, and <code>difference</code>. Notice that I have heavily used <code>undefined</code> throughout the file. This is a placeholder that allows me to compile a file without giving full definitions. Its good practice to use this so that you can work with partial implementations of your code. The other thing to note is that I have given the definition to <code>successor</code> and <code>predecessor</code>. These are defined on <code>AbstractNatural</code> so to complete the assignment their definitions will need to be updated for <code>AbstractInteger</code> depending on your implementation choice.</p>
 <h2 id="abstract-natural-numbers">Abstract Natural Numbers</h2>
@@ -63,6 +72,31 @@
 <span class="dt">S</span> <span class="dt">Zero</span>
 <span class="fu">*</span><span class="dt">AbstractInteger</span><span class="fu">&gt;</span> <span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Zero</span>)
 <span class="dt">S</span> (<span class="dt">S</span> <span class="dt">Zero</span>)</code></pre>
+<h3 id="typeclasses">Typeclasses</h3>
+<p>But we also want to extend other useful operations for the natural numbers: these include testing for equality and ordering. I bring these up because they demonstrate the central Haskell idea of using induction and pattern-matching to define programming constructs. Following the logic here is important:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Eq</span> <span class="dt">AbstractNatural</span> <span class="kw">where</span>
+  <span class="dt">Zero</span> <span class="fu">==</span> <span class="dt">Zero</span> <span class="fu">=</span> <span class="dt">True</span>
+  <span class="dt">Zero</span> <span class="fu">==</span> <span class="dt">S</span> y  <span class="fu">=</span> <span class="dt">False</span>
+  <span class="dt">S</span> x  <span class="fu">==</span> <span class="dt">Zero</span> <span class="fu">=</span> <span class="dt">False</span>
+  <span class="dt">S</span> x  <span class="fu">==</span> <span class="dt">S</span> y  <span class="fu">=</span> x <span class="fu">==</span> y</code></pre>
+<p>The line <code>Zero == Zero = True</code> means that zero is always equal to zero. The lines <code>Zero == S y = False</code> and <code>S x == Zero = False</code> means that non-zero things never equal zero. The final line <code>S x == S y = x == y</code> removes an <code>S</code> from the two non-zero terms being compared, this is repeated until one of the terms is zero and then the other comparisons will kick in.</p>
+<p>Note the inductive logic. We handle the zero case first, and then we build up from there.</p>
+<h3 id="converting-natural-numbers">Converting Natural Numbers</h3>
+<p>That same pattern matching and inductive principle comes into play when we define conversion functions between the concrete numbers and <code>AbstractNatural</code> or <code>AbstractInteger</code>. Consider the function</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">toAbstract <span class="dv">0</span> <span class="fu">=</span> <span class="dt">Zero</span>
+toAbstract x <span class="fu">=</span> <span class="dt">S</span> <span class="fu">$</span> toAbstract (x <span class="fu">-</span> <span class="dv">1</span>)</code></pre>
+<p>and the conversion back</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fromAbstract <span class="dt">Zero</span> <span class="fu">=</span> <span class="dv">0</span>
+fromAbstract (<span class="dt">S</span> x) <span class="fu">=</span> <span class="dv">1</span> <span class="fu">+</span> (toAbstract x)</code></pre>
+<h3 id="adding-natural-numbers">Adding Natural Numbers</h3>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">add <span class="dt">Zero</span> y <span class="fu">=</span> y
+add (<span class="dt">S</span> x) y <span class="fu">=</span> <span class="dt">S</span> (add x y)</code></pre>
+<h2 id="division">Division</h2>
+<p>We consider two operations for division. The first is modulo: which will be entered in as</p>
+<pre><code>$ ./Calc 17 9 mod</code></pre>
+<p>and <code>a b mod</code> is equal to <code>k</code> where <code>0 &lt;= k &lt; b</code> and <code>k</code> is the smallest integer such that <code>a - k</code> is divisible by <code>b</code>. I.e. there must exist an integer <code>q</code> such that <code>b * q = a - k</code>. This is the recommended way to implement division as well so that <code>a b /</code> will be <code>q</code> where <code>b * q = a - k</code> and <code>k</code> is the smallest integer in <code>0 &lt;= k &lt; b</code>.</p>
+<h2 id="augmenting-the-definitions">Augmenting the definitions</h2>
+<p>We add these extra operations by modifying the definition of <code>foldingFunction</code> in <code>AbstractInteger.hs</code>. Note well that you will want to add the extra operations before the catchall <code>numberString</code> line so that the operator will be matched.</p>
 <p>Note that I have defined a variety of integers:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">zero <span class="fu">=</span> <span class="dt">Zero</span>
 one <span class="fu">=</span> successor zero
