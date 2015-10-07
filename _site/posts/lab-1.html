@@ -37,7 +37,7 @@
 <h2 id="chief-deliverables">Chief Deliverables</h2>
 <ol style="list-style-type: decimal">
 <li>A commandline calculator using <code>foldl</code></li>
-<li>Calculators implemented with an <code>AbstractInteger</code> algebraic datatype</li>
+<li>Calculators implemented with an <code>AbstractInteger</code> algebraic datatype which you will define. You may modify or extent <code>AbstractNatural</code> included in the project skeleton.</li>
 </ol>
 <p>I have included <a href="../fls/lab1.zip">project skeleton in the files</a> and there is a file <code>Calc.hs</code> which will imports <code>AbstractInteger</code> and uses it to run the calculator. You may run the calculator from the beginning by first compiling:</p>
 <pre><code>mark@nal:~/Projects/cs161/labs/lab1$ ghc Calc</code></pre>
@@ -96,7 +96,7 @@ add (<span class="dt">S</span> x) y <span class="fu">=</span> <span class="dt">S
 <h2 id="division">Division</h2>
 <p>We consider two operations for division. The first is modulo: which will be entered in as</p>
 <pre><code>$ ./Calc 17 9 mod</code></pre>
-<p>and <code>a b mod</code> is equal to <code>k</code> where <code>0 &lt;= k &lt; b</code> and <code>k</code> is the smallest integer such that <code>a - k</code> is divisible by <code>b</code>. I.e. there must exist an integer <code>q</code> such that <code>b * q = a - k</code>. This is the recommended way to implement division as well so that <code>a b /</code> will be <code>q</code> where <code>b * q = a - k</code> and <code>k</code> is the smallest integer in <code>0 &lt;= k &lt; b</code>.</p>
+<p>and <code>a b mod</code> is equal to <code>k</code> where <code>0 &lt;= k &lt; |b|</code> (absolute value of <code>b</code>) and <code>k</code> is the smallest nonnegative integer such that <code>a - k</code> is divisible by <code>b</code>. I.e. there must exist an integer <code>q</code> such that <code>b * q = a - k</code>. This is the recommended way to implement division as well so that <code>a b /</code> will be <code>q</code> where <code>b * q = a - k</code> and <code>k</code> is the smallest integer in <code>0 &lt;= k &lt; b</code>.</p>
 <h2 id="augmenting-the-definitions">Augmenting the definitions</h2>
 <p>We add these extra operations by modifying the definition of <code>foldingFunction</code> in <code>AbstractInteger.hs</code>. Note well that you will want to add the extra operations before the catchall <code>numberString</code> line so that the operator will be matched.</p>
 <p>Note that I have defined a variety of integers:</p>
