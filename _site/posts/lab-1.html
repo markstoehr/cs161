@@ -51,7 +51,7 @@
 <li><code>&quot;+&quot;</code>, <code>add</code></li>
 <li><code>&quot;-&quot;</code>, <code>difference</code></li>
 <li><code>&quot;*&quot;</code>, <code>multiply</code> (Note to write multiply you’ll need to do <code>./Calc 3 4 \*</code> to escape the asterisk for proper interpretation)</li>
-<li><code>&quot;%&quot;</code>, <code>modulo</code> more on this later</li>
+<li><code>&quot;%&quot;</code>, <code>modulo</code> more on this later (earlier versions of this assignment used <code>mod</code> and so that is also an acceptable name for the operator but be sure to implement the operator also using <code>&quot;%&quot;</code>).</li>
 <li><code>&quot;/&quot;</code>, <code>divide</code> more on this later</li>
 </ol>
 <p>The calculator should operation on <code>AbstractInteger</code> so that it can output negative numbers but it does not need to accept negative numbers as input.</p>
@@ -95,8 +95,8 @@ fromAbstract (<span class="dt">S</span> x) <span class="fu">=</span> <span class
 add (<span class="dt">S</span> x) y <span class="fu">=</span> <span class="dt">S</span> (add x y)</code></pre>
 <h2 id="division">Division</h2>
 <p>We consider two operations for division. The first is modulo: which will be entered in as</p>
-<pre><code>$ ./Calc 17 9 mod</code></pre>
-<p>and <code>a b mod</code> is equal to <code>k</code> where <code>0 &lt;= k &lt; |b|</code> (absolute value of <code>b</code>) and <code>k</code> is the smallest nonnegative integer such that <code>a - k</code> is divisible by <code>b</code>. I.e. there must exist an integer <code>q</code> such that <code>b * q = a - k</code>. This is the recommended way to implement division as well so that <code>a b /</code> will be <code>q</code> where <code>b * q = a - k</code> and <code>k</code> is the smallest integer in <code>0 &lt;= k &lt; b</code>.</p>
+<pre><code>$ ./Calc 17 9 %</code></pre>
+<p>and <code>a b %</code> is equal to <code>k</code> where <code>0 &lt;= k &lt; |b|</code> (absolute value of <code>b</code>) and <code>k</code> is the smallest nonnegative integer such that <code>a - k</code> is divisible by <code>b</code>. I.e. there must exist an integer <code>q</code> such that <code>b * q = a - k</code>. This is the recommended way to implement division as well so that <code>a b /</code> will be <code>q</code> where <code>b * q = a - k</code> and <code>k</code> is the smallest integer in <code>0 &lt;= k &lt; b</code>.</p>
 <h2 id="augmenting-the-definitions">Augmenting the definitions</h2>
 <p>We add these extra operations by modifying the definition of <code>foldingFunction</code> in <code>AbstractInteger.hs</code>. Note well that you will want to add the extra operations before the catchall <code>numberString</code> line so that the operator will be matched.</p>
 <p>Note that I have defined a variety of integers:</p>
