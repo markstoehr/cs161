@@ -97,6 +97,7 @@ add (<span class="dt">S</span> x) y <span class="fu">=</span> <span class="dt">S
 <p>We consider two operations for division. The first is modulo: which will be entered in as</p>
 <pre><code>$ ./Calc 17 9 %</code></pre>
 <p>and <code>a b %</code> is equal to <code>k</code> where <code>0 &lt;= k &lt; |b|</code> (absolute value of <code>b</code>) and <code>k</code> is the smallest nonnegative integer such that <code>a - k</code> is divisible by <code>b</code>. I.e. there must exist an integer <code>q</code> such that <code>b * q = a - k</code>. This is the recommended way to implement division as well so that <code>a b /</code> will be <code>q</code> where <code>b * q = a - k</code> and <code>k</code> is the smallest integer in <code>0 &lt;= k &lt; b</code>.</p>
+<p>For the case <code>a 0 %</code> or <code>a 0 /</code> you can output whatever is convenient.</p>
 <h2 id="augmenting-the-definitions">Augmenting the definitions</h2>
 <p>We add these extra operations by modifying the definition of <code>foldingFunction</code> in <code>AbstractInteger.hs</code>. Note well that you will want to add the extra operations before the catchall <code>numberString</code> line so that the operator will be matched.</p>
 <p>Note that I have defined a variety of integers:</p>
