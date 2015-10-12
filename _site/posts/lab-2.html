@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CS161 Labs - Lab 2: Cat Plus</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+	<link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">CS161 Labs</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Lab 2: Cat Plus</h1>
+
+            <div class="info">
+    Posted on October 12, 2015
+    
+</div>
+
+<h2 id="announcements">Announcements</h2>
+<p>My office hours are 1-2pm on Wednesday and Thursday in Young 404. Submissions this week are to be done in subversion.</p>
+<h2 id="summary">Summary</h2>
+<p>Write a program, <code>CatPlus</code>, that prints out text in the standard output and formats the text. Complete <code>CatPlus</code> by adding new flags, filling in function definitions, annotating functions with types, and passing more tests.</p>
+<h2 id="preparation">Preparation</h2>
+<p>You’ll need to</p>
+<ol style="list-style-type: decimal">
+<li>Setup your subversion folder</li>
+<li>Download the <a href="../fls/lab1.zip">project files</a></li>
+<li><p>Run</p>
+<p>mark@computer:~/cs161/lab2$ ./Tests.sh</p></li>
+</ol>
+<p>The last step ensures that the code is working in your coding environment.</p>
+<h2 id="subversion">Subversion</h2>
+<p>Subversion allows you to develop code on multiple computers and keep track of code version history.</p>
+<p>Important commands (vocab explained in a moment):</p>
+<ol style="list-style-type: decimal">
+<li><code>svn checkout https://phoenixforge.cs.uchicago.edu/svn/cnetid-cs161-aut-15</code> – get your repository (run once this quarter probably)</li>
+<li><code>svn info</code> – Basic info (i.e. last commit date)</li>
+<li><code>svn log</code> – activity log</li>
+<li><code>svn update</code> – update working copy with changes in the repository</li>
+<li><code>svn add</code> – add local file to repository</li>
+<li><code>svn commit</code> – update repository with local changes</li>
+<li><code>svn revert</code> – revert local changes to file in repository</li>
+<li><code>svn delete</code> – remove files from repository</li>
+<li><code>svn copy</code> – copy files in repository</li>
+<li><code>svn move</code> – rename files in repository (and possibly change location)</li>
+</ol>
+<p>Subversion allows you to work on the same code across different computers, asychronously (e.g. without having each computer be online at the time). This is achieved by keeping a collection of folders called the <em>repository</em> that is the master version of the code you write. Each time you work on a computer:</p>
+<ol style="list-style-type: decimal">
+<li>You <code>svn update</code> to get the local <em>working copy</em> to reflect any changes in the respository that were <em>committed</em> earlier</li>
+<li>Each new file (e.g. <code>foo</code>) or folder (e.g. <code>bar</code>) you create on the local machine you run <code>svn add foo</code> or <code>svn add bar</code>, respectively, so that the repository will start keeping track of that file/folder.</li>
+<li>As you make changes to a file, run <code>svn commit -m &quot;&lt;description of change&gt;&quot;</code> so that the remote repository knows about the changes being made locally. The description of the change should be short, usually no more than a few words.</li>
+<li>Run <code>svn log</code> or <code>svn info</code> to ensure that the changes you made were accepted into the repository.</li>
+</ol>
+<p>The authoritative reference and tutorial on <a href="http://subversion.apache.org/">Apache Subversion</a> is the <a href="http://svnbook.red-bean.com/">Version Control with Subversion</a>. You do not need to master the book in its entirety but I suggest you read Chapter 3 to get a feel for developing your workflow. By workflow I mean the steps you do to save copies of your work.</p>
+<p>Subversion keeps track of a file system called your <em>repository</em> which has an address</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">https</span>://phoenixforge.cs.uchicago.edu/svn/cnetid-cs161-aut-15</code></pre>
+<p>and may be viewed at</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">https</span>://phoenixforge.cs.uchicago.edu/projects/cnetid-cs161-aut-15/repository</code></pre>
+<p>which is the code that I will see when I am grading the assignments. Subversion performs two functions with this file system:</p>
+<ul>
+<li>keep it synchronized across multiple computers</li>
+<li>stores the revision history for all files in the file system</li>
+</ul>
+<p>Subversion does this by keeping storing a master version of the repository on a server (<code>phoenixforge</code> iin our case) and providing commands to synchronize it with local copies on other machines. In order for your local machine to store the respository Subversion creates a subtree of files and folders within your local filesystem–this allows Subversion to rely on the local file system to manage the physical bit storage of the data. You can use <code>svn</code> to create a copy of the repository on your local machine which will be a folder titled <code>cnetid-cs161-aut-15</code> somewhere in your local filesystem. To do this run</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~$ svn checkout https://phoenixforge.cs.uchicago.edu/svn/cnetid-cs161-aut-15</code></pre>
+<p>which will also prompt you for your password. Note that the example command above is run at the prompt <code>cnetid@computer:~$</code> which indicates that the command is being run from the location <code>~</code> which is a synonym for the environment variable <code>HOME</code>. So, running the above command will place the root of the repository tree at <code>$HOME/cnetid-cs161-aut-15</code>. If I wanted to put the repository at a different address within my local file system I would run the command with a different working directory.</p>
+<p>If I wanted to save the directory to my <code>cs161</code> folder I would need to change directories first.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~$ cd cs161
+<span class="kw">cnetid@computer</span>:~/cs161$ svn checkout https://phoenixforge.cs.uchicago.edu/svn/cnetid-cs161-aut-15</code></pre>
+<p>An important conceptual note is that the file system of your repository is distinct from the file system on your local machine. <code>svn</code> can be seen as a tool that keeps these two file systems synchronized which suggests two fundamental types of operations: those that change the repository to match the local file system and operations that change the local file system to match the repository. <code>svn checkout</code> is an example of the former and it creates a new set of files and folders. These operations necessarily include creating new files, changing file contents, and deleting files (e.g. creating a <code>lab4</code> directory and putting code into a <code>main.hs</code> file).</p>
+<p>To add files to the repository we use <code>svn add foo</code>. This will only work if the folder containing <code>foo</code> is a working copy and part of the repository (otherwise you’ll get an error).</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~$ cd cs161
+<span class="kw">cnetid@computer</span>:~/cs161$ svn checkout https://phoenixforge.cs.uchicago.edu/svn/cnetid-cs161-aut-15
+<span class="kw">cnetid@computer</span>:~/cs161$ cd cnetid-cs161-aut-15
+<span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15$ mkdir lab2
+<span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15$ cd lab2
+<span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ echo <span class="st">&quot;Test&quot;</span> <span class="kw">&gt;</span> foo
+<span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ svn add foo
+<span class="kw">svn</span>: E150000: Can<span class="st">'t find parent directory'</span>s node while trying to add <span class="st">'/home/cnetid/cs161/cnetid-cs161-aut-15/lab2/foo'</span>
+<span class="kw">svn</span>: E155010: The node <span class="st">'/home/cnetid/cs161/cnetid-cs161-aut-15/lab2'</span> was not found.</code></pre>
+<p>what you need to do instead is</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15$ mkdir lab2
+<span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15$ svn add lab2
+<span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15$ cd lab2
+<span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ echo <span class="st">&quot;Test&quot;</span> <span class="kw">&gt;</span> foo
+<span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ svn add foo</code></pre>
+<p>then when you’re done working you just run</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ svn commit -m <span class="st">&quot;worked on foo&quot;</span></code></pre>
+<p>and check your commit</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ svn info</code></pre>
+<p>Then you’re done.</p>
+<h1 id="submission-requirements">Submission Requirements</h1>
+<p>If you haven’t already download the <a href="../fls/lab2.zip">project files</a>, unzip them into your subversion repository <code>cnetid-cs161-aut-15</code>, and run <code>svn add lab2</code>. Then run <code>svn commit -m &quot;lab2 first version&quot;</code>.</p>
+<p>Your goal is to make tests pass. To check your progress run</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ ./Tests.sh</code></pre>
+<p>and you should see <code>Failed 20 tests.</code> at the bottom when you first start out.</p>
+<p>To make all the tests pass you will need to:</p>
+<ol style="list-style-type: decimal">
+<li>Complete <code>catFlagListToCatOptions</code> in <code>CatFlagLibrary.hs</code></li>
+<li>Complete definitions for functions in <code>CatLibrary.hs</code>: <code>numberSome</code>, <code>dollarEnds</code>, <code>squeezeBlank</code></li>
+<li>Write tests for <code>DollarTest</code>, <code>NumberAllTest</code>, <code>NumberSomeTest</code>, <code>SqueezeTest</code></li>
+<li>Add new functionality and tests for <code>left align</code></li>
+<li>Add new functionality, tests, and flags for: <code>fill</code> (<code>-f</code>), <code>indent</code> (<code>-i</code>), <code>right align</code> (<code>-r</code>), <code>center align</code> (<code>-c</code>), <code>justify</code> (<code>-j</code>).</li>
+</ol>
+<h2 id="code-organization">Code Organization</h2>
+<p><code>lab2</code> contains: 1. <code>CatPlus.hs</code> 2. <code>CatLibrary.hs</code> 3. <code>CatFlagLibrary.hs</code></p>
+<p><code>CatPlus.hs</code> is the man file that gets compiled into <code>CatPlus</code> which is the program to display and format text files. You do not need to modify this file. <code>CatLibrary.hs</code> contains the logic for processing text and performing the necessary formatting you will modify this file to add and complete functionality. <code>CatFlagLibrary.hs</code> contains the flag processing logic, to add new flags you will need to modify this file.</p>
+<h2 id="code-functionality">Code Functionality</h2>
+<p>The code is used by writing, e.g.</p>
+<pre><code>$ ./CatPlus -n -s foo bar</code></pre>
+<p>which would apply flags <code>n</code> and <code>s</code> to the files <code>foo</code> and <code>bar</code> and output them to standard output in the terminal. We want to be able to:</p>
+<ol style="list-style-type: decimal">
+<li>Number the lines (e.g. try <code>cat -n CatPlus.hs</code>)</li>
+<li>Print a dollar sign at the end of the lines (e.g. try <code>cat -n -e CatPlus.hs</code>)</li>
+<li>Squeeze multiple adjacent empty lines causing the output to single-spaced (e.g. <code>cat -s CatPlus.hs</code>)</li>
+<li>Left align to a certain column-width: e.g. <code>cat -l 80 CatPlus.hs</code></li>
+<li>Right align to a certain column-width: e.g. <code>cat -r 17 CatPlus.hs</code></li>
+<li>Justify to a certain column-width: e.g. <code>cat -j 88 CatPlus.hs</code></li>
+<li>Center align to a certain column-width: e.g. <code>cat -c 20 CatPlus.hs</code></li>
+<li>Left align or justify while preserving indentation: e.g. <code>cat -i -j 88 CatPlus.hs</code></li>
+<li>Left align or justify and adding trailing spaces to reach exact column width: e.g. <code>cat -f -j 88 CatPlus.hs</code></li>
+</ol>
+<p>The code implements some of the basic functionality of <a href="http://www.gnu.org/software/coreutils/manual/html_node/cat-invocation.html#cat-invocation">Unix <code>cat</code></a> as well as some additional <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Fill-Commands.html#Fill-Commands">paragraph formatting</a> logic based on <code>emacs</code>. Some functionality has already been implemented.</p>
+<h2 id="flag-logic">Flag Logic</h2>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
