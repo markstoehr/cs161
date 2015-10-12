@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>CS161 Labs - Lab 2: Cat Plus</title>
+        <title>CS161 Labs - Lab 2: Intersections and Computational Geometry</title>
         <link rel="stylesheet" type="text/css" href="../css/default.css" />
 	<link rel="stylesheet" type="text/css" href="../css/syntax.css" />
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -22,7 +22,7 @@
         </div>
 
         <div id="content">
-            <h1>Lab 2: Cat Plus</h1>
+            <h1>Lab 2: Intersections and Computational Geometry</h1>
 
             <div class="info">
     Posted on October 12, 2015
@@ -32,16 +32,7 @@
 <h2 id="announcements">Announcements</h2>
 <p>My office hours are 1-2pm on Wednesday and Thursday in Young 404. Submissions this week are to be done in subversion.</p>
 <h2 id="summary">Summary</h2>
-<p>Write a program, <code>CatPlus</code>, that prints out text in the standard output and formats the text. Complete <code>CatPlus</code> by adding new flags, filling in function definitions, annotating functions with types, and passing more tests.</p>
-<h2 id="preparation">Preparation</h2>
-<p>You’ll need to</p>
-<ol style="list-style-type: decimal">
-<li>Setup your subversion folder</li>
-<li>Download the <a href="../fls/lab1.zip">project files</a></li>
-<li><p>Run</p>
-<p>mark@computer:~/cs161/lab2$ ./Tests.sh</p></li>
-</ol>
-<p>The last step ensures that the code is working in your coding environment.</p>
+<p>Write a program to perform computational geometry and submit via <code>svn</code> (subversion).</p>
 <h2 id="subversion">Subversion</h2>
 <p>Subversion allows you to develop code on multiple computers and keep track of code version history.</p>
 <p>Important commands (vocab explained in a moment):</p>
@@ -102,44 +93,55 @@
 <p>and check your commit</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ svn info</code></pre>
 <p>Then you’re done.</p>
-<h1 id="submission-requirements">Submission Requirements</h1>
-<p>If you haven’t already download the <a href="../fls/lab2.zip">project files</a>, unzip them into your subversion repository <code>cnetid-cs161-aut-15</code>, and run <code>svn add lab2</code>. Then run <code>svn commit -m &quot;lab2 first version&quot;</code>.</p>
-<p>Your goal is to make tests pass. To check your progress run</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cnetid@computer</span>:~/cs161/cnetid-cs161-aut-15/lab2$ ./Tests.sh</code></pre>
-<p>and you should see <code>Failed 20 tests.</code> at the bottom when you first start out.</p>
-<p>To make all the tests pass you will need to:</p>
+<h1 id="using-haskell-as-a-model-for-computational-geometry">Using Haskell as a model for Computational Geometry</h1>
+<p>The basic idea here is to use Haskell’s algebraic data types as a basis for defining geometric objects. Analytic geometry can then be used to answer geometric questions. In this lab we will model shapes in the two-dimensional plane and answer questions about intersection. This is useful for thinking about the code underlying computer games.</p>
+<p>A <a href="../fls/lab2.hs">starting file</a> for this lab is available with some initial definitions.</p>
+<h2 id="basic-definitions">Basic Definitions</h2>
+<p>We begin the lab with some simple definitions</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- A point is a point in the xy plane, represented by x and y coordinates</span>
+<span class="co">-- E.g. (Point 0.0 0.0) is the origin, (Point (-1) (1)) is in the top left</span>
+<span class="co">-- quadrant.</span>
+<span class="kw">data</span> <span class="dt">Point</span> <span class="fu">=</span> <span class="dt">Point</span> <span class="dt">Double</span> <span class="dt">Double</span>
+    <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>)
+
+<span class="co">-- A line segment is a straight line of finite length, defined by its</span>
+<span class="co">-- two end points.   E.g. (LineSegment (Point 0 0) (Point 1 1)) is a</span>
+<span class="co">-- line segment from the origin to the coordinate (1, 1)</span>
+<span class="kw">data</span> <span class="dt">LineSegment</span> <span class="fu">=</span> <span class="dt">LineSegment</span> <span class="dt">Point</span> <span class="dt">Point</span> 
+    <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>)
+
+
+<span class="co">-- A Path is a 2D path in the xy-plane.  The idea is that Path can be </span>
+<span class="co">-- extended to support straight lines, curves, and arbitrary paths, </span>
+<span class="co">-- but currently there is only one data constructor for Path: Line.</span>
+<span class="kw">data</span> <span class="dt">Path</span> <span class="fu">=</span> 
+<span class="co">-- Line represents an infinite straight line defined by its slope a</span>
+<span class="co">-- and its y intercept b, ie. by the equation y = ax + b</span>
+    <span class="dt">Line</span> <span class="dt">Double</span> <span class="dt">Double</span>
+    <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>)</code></pre>
+<p>So we now have some basic data structures. LineSegments are constructed from points and we have an abstract notion of a path formed from a line. Throughout this lab we are going to expand the definition of <code>Path</code> to include more definitions and we will write functions that use path using Haskell’s pattern-matching facilities to get the definition right (NOTE: when writing a function that maps a <code>Path</code> to something else use pattern matching idioms).</p>
 <ol style="list-style-type: decimal">
-<li>Complete <code>catFlagListToCatOptions</code> in <code>CatFlagLibrary.hs</code></li>
-<li>Complete definitions for functions in <code>CatLibrary.hs</code>: <code>numberSome</code>, <code>dollarEnds</code>, <code>squeezeBlank</code></li>
-<li>Write tests for <code>DollarTest</code>, <code>NumberAllTest</code>, <code>NumberSomeTest</code>, <code>SqueezeTest</code></li>
-<li>Add new functionality and tests for <code>left align</code></li>
-<li>Add new functionality, tests, and flags for: <code>fill</code> (<code>-f</code>), <code>indent</code> (<code>-i</code>), <code>right align</code> (<code>-r</code>), <code>center align</code> (<code>-c</code>), <code>justify</code> (<code>-j</code>).</li>
+<li>Write a function <code>intersects</code> that checks whether a <code>LineSegment</code> intersects with a <code>Line</code>. Try solving for the problem in the case where the line segment is vertical and then see if you can generalize from that.</li>
 </ol>
-<h2 id="code-organization">Code Organization</h2>
-<p><code>lab2</code> contains:</p>
-<ol style="list-style-type: decimal">
-<li><code>CatPlus.hs</code></li>
-<li><code>CatLibrary.hs</code></li>
-<li><code>CatFlagLibrary.hs</code></li>
+<p>This first problem is meant as a warm-up to start checking intersections. We will add to the definition of <code>intersect</code> as we expand the definition of <code>Path</code>.</p>
+<h2 id="defining-data-types-for-shapes">Defining data types for shapes</h2>
+<p>A crucial skill is being able to define abstract type definitions to capture real-world objects. We are wanting to do computational geometry so you will need to define models of shapes.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Define a type <code>Shape</code> that can be a <code>Triangle</code>, <code>Quadrilateral</code>, or a <code>Circle</code>. Use algebraic datatypes. Make sure that you can check equality and use <code>Show</code>.</li>
 </ol>
-<p><code>CatPlus.hs</code> is the man file that gets compiled into <code>CatPlus</code> which is the program to display and format text files. You do not need to modify this file. <code>CatLibrary.hs</code> contains the logic for processing text and performing the necessary formatting you will modify this file to add and complete functionality. <code>CatFlagLibrary.hs</code> contains the flag processing logic, to add new flags you will need to modify this file.</p>
-<h2 id="code-functionality">Code Functionality</h2>
-<p>The code is used by writing, e.g.</p>
-<pre><code>$ ./CatPlus -n -s foo bar</code></pre>
-<p>which would apply flags <code>n</code> and <code>s</code> to the files <code>foo</code> and <code>bar</code> and output them to standard output in the terminal. We want to be able to:</p>
-<ol style="list-style-type: decimal">
-<li>Number the lines (e.g. try <code>cat -n CatPlus.hs</code>)</li>
-<li>Print a dollar sign at the end of the lines (e.g. try <code>cat -n -e CatPlus.hs</code>)</li>
-<li>Squeeze multiple adjacent empty lines causing the output to single-spaced (e.g. <code>cat -s CatPlus.hs</code>)</li>
-<li>Left align to a certain column-width: e.g. <code>cat -l 80 CatPlus.hs</code></li>
-<li>Right align to a certain column-width: e.g. <code>cat -r 17 CatPlus.hs</code></li>
-<li>Justify to a certain column-width: e.g. <code>cat -j 88 CatPlus.hs</code></li>
-<li>Center align to a certain column-width: e.g. <code>cat -c 20 CatPlus.hs</code></li>
-<li>Left align or justify while preserving indentation: e.g. <code>cat -i -j 88 CatPlus.hs</code></li>
-<li>Left align or justify and adding trailing spaces to reach exact column width: e.g. <code>cat -f -j 88 CatPlus.hs</code></li>
+<h2 id="bounding-boxes-for-shapes">Bounding Boxes for Shapes</h2>
+<p>For any shape there is a unique <em>minimum</em> <em>bounding</em> <em>rectangle</em> which is defined as the smallest axis-aligned rectangle that encloses the shape. Axis-aligned here means that each of the four edges of the rectable runs parallel to either the <span class="math"><em>x</em></span>-axis or the <span class="math"><em>y</em></span>-axis. Minimum bounding rectangles are very useful for programming computer games because testing for intersections in general is a very hard problem.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Write a datatype for <code>BoundingBox</code>. You may choose how you want to do it, but I suggest defining it by two points: the bottom left corner and the upper-right corner.</p></li>
+<li><p>Write a function <code>boundShape</code> which maps a <code>Shape</code> to a <code>BoundingBox</code> that maps a shape to its minimum bounding rectangle. Functions such as <code>min</code>, <code>minimum</code>, <code>max</code>, <code>maximum</code> may be useful here.</p></li>
+<li><p>Write some tests to ensure that your code works.</p></li>
 </ol>
-<p>The code implements some of the basic functionality of <a href="http://www.gnu.org/software/coreutils/manual/html_node/cat-invocation.html#cat-invocation">Unix <code>cat</code></a> as well as some additional <a href="http://www.gnu.org/software/emacs/manual/html_node/emacs/Fill-Commands.html#Fill-Commands">paragraph formatting</a> logic based on <code>emacs</code>. Some functionality has already been implemented.</p>
-<h2 id="flag-logic">Flag Logic</h2>
+<h2 id="checking-if-lines-intersect-with-bounding-boxes">Checking if Lines Intersect with bounding boxes</h2>
+<ol start="6" style="list-style-type: decimal">
+<li><p>Implement a function <code>intersectsBB</code> that, given a <code>BoundingBox</code> and a <code>Path</code> checks to see if the path intersects the bounding box. At present this only includes a <code>Line</code></p></li>
+<li><p>Write a function <code>mightIntersectShape</code> which use the functions already present to check if a path intersects the bounding box of a shape. This should be a short function without much innovation to it.</p></li>
+<li><p>Extend Path to include a type constructor <code>Parabola</code> and add onto <code>intersects</code> and <code>intersectsBB</code>.</p></li>
+</ol>
 
         </div>
         <div id="footer">
