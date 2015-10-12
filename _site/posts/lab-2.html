@@ -124,6 +124,9 @@
 <li>Write a function <code>intersects</code> that checks whether a <code>LineSegment</code> intersects with a <code>Line</code>. Try solving for the problem in the case where the line segment is vertical and then see if you can generalize from that.</li>
 </ol>
 <p>This first problem is meant as a warm-up to start checking intersections. We will add to the definition of <code>intersect</code> as we expand the definition of <code>Path</code>.</p>
+<h2 id="note-on-vertical-lines">Note on Vertical lines</h2>
+<p><code>Infinity</code> is a valid value for IEEE floating point numbers but the Haskell language standard does not require it. To get around this you may write:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">infinity <span class="fu">=</span> read <span class="st">&quot;Infinity&quot;</span><span class="ot"> ::</span> <span class="dt">Double</span></code></pre>
 <h2 id="defining-data-types-for-shapes">Defining data types for shapes</h2>
 <p>A crucial skill is being able to define abstract type definitions to capture real-world objects. We are wanting to do computational geometry so you will need to define models of shapes.</p>
 <ol start="2" style="list-style-type: decimal">
