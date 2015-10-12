@@ -127,6 +127,7 @@
 <h2 id="note-on-vertical-lines">Note on Vertical lines</h2>
 <p><code>Infinity</code> is a valid value for IEEE floating point numbers but the Haskell language standard does not require it. To get around this you may write:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">infinity <span class="fu">=</span> read <span class="st">&quot;Infinity&quot;</span><span class="ot"> ::</span> <span class="dt">Double</span></code></pre>
+<p>Another possibility is to add something like a <code>VerticalLine</code> constructor to the <code>Path</code> data type.</p>
 <h2 id="defining-data-types-for-shapes">Defining data types for shapes</h2>
 <p>A crucial skill is being able to define abstract type definitions to capture real-world objects. We are wanting to do computational geometry so you will need to define models of shapes.</p>
 <ol start="2" style="list-style-type: decimal">
@@ -145,6 +146,33 @@
 <li><p>Write a function <code>mightIntersectShape</code> which use the functions already present to check if a path intersects the bounding box of a shape. This should be a short function without much innovation to it.</p></li>
 <li><p>Extend Path to include a type constructor <code>Parabola</code> and add onto <code>intersects</code> and <code>intersectsBB</code>.</p></li>
 </ol>
+<h2 id="testing-and-sample-runs">Testing and Sample Runs</h2>
+<p>Sample runs are a good way to start thinking about tests. At the top of Lab2.hs we can put a module declaration to export the data types and functions we write</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Lab2</span>(
+	<span class="dt">Point</span>(<span class="dt">Point</span>),
+	<span class="dt">LineSegment</span>(<span class="dt">LineSegment</span>),
+	<span class="dt">Path</span>(<span class="dt">Line</span>)
+	<span class="co">-- other functions and things go here</span>
+) <span class="kw">where</span></code></pre>
+<p>and then construct a testing file <code>Tests.hs</code> with the top line having</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Lab2</span></code></pre>
+<p>Inside <code>Tests.hs</code> we will put the sample runs. We can think of a sample run as a function we have implemented, e.g. <code>f</code>, that along with a particular set of inputs, e.g. <code>x</code> and <code>y</code>, gives a particular expected result <code>z</code>. Thus, we could write a test as:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">test0 ::</span> <span class="dt">Bool</span>
+test0 <span class="fu">=</span> f x y <span class="fu">==</span> z</code></pre>
+<p>which will evaluate to true if <code>f</code> behaves as expected. For each exercise you may come up with a set of sample runs that demonstrate you have correctly implemented the functions and then you can write tests in the form above.</p>
+<p>To give a summary we can put all the tests into a single list:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tests ::</span> [<span class="dt">Bool</span>]
+tests <span class="fu">=</span> [test0,
+         test1
+	     <span class="co">-- more tests</span>
+         ]</code></pre>
+<p>And then we can get some summaries of the current testing state:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.List</span>
+
+testAll <span class="fu">=</span> and tests
+testPasses <span class="fu">=</span> sum <span class="fu">$</span> map fromEnum tests
+testFirstFailIndex <span class="fu">=</span> elemIndex <span class="dt">False</span> tests</code></pre>
+<p><code>testAll</code> checks whether all the tests are passing. <code>testPasses</code> counts how many tests are passing. <code>testFirstFailIndex</code> gives the index in <code>tests</code> of the first failing test.</p>
 
         </div>
         <div id="footer">
