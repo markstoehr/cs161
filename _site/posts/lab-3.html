@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CS161 Labs - Lab 3: More Haskell Calculators</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+	<link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">CS161 Labs</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Lab 3: More Haskell Calculators</h1>
+
+            <div class="info">
+    Posted on October 19, 2015
+    
+</div>
+
+<h1 id="building-a-simple-haskell-calculator">Building a Simple Haskell Calculator</h1>
+<p>Later in the course you will consider monadic parsing but in this lab we will focus on the simple parsing problem of constructing a calculator.</p>
+<p>The calculator should work as follows:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="dv">1</span> <span class="fu">+</span> <span class="dv">1</span>
+<span class="dv">2</span>
+<span class="fu">&gt;</span> <span class="dv">2</span> <span class="fu">*</span> <span class="dv">6</span>
+<span class="dv">12</span>
+<span class="fu">&gt;</span> (<span class="dv">1</span> <span class="fu">+</span> <span class="dv">3</span>) <span class="fu">*</span> (<span class="dv">5</span> <span class="fu">+</span> <span class="dv">1</span>)
+<span class="dv">24</span>
+<span class="fu">&gt;</span> (<span class="dv">1</span> <span class="fu">+</span> <span class="dv">2</span> <span class="fu">+</span> <span class="dv">3</span> <span class="fu">*</span> <span class="dv">2</span> <span class="fu">+</span> <span class="dv">6</span>)
+<span class="dv">15</span>
+<span class="fu">&gt;</span> (<span class="dv">1</span> <span class="fu">+</span> (<span class="dv">2</span> <span class="fu">+</span> ((<span class="dv">4</span> <span class="fu">+</span> <span class="dv">2</span>) <span class="fu">*</span> <span class="dv">6</span>)))
+<span class="dv">39</span>
+<span class="fu">&gt;</span> <span class="dv">5</span> <span class="fu">+-</span><span class="dv">6</span>    <span class="co">--This should be parsed as 5 + (-6)</span>
+<span class="fu">-</span><span class="dv">1</span></code></pre>
+<p>where user-input is indicated by a prepended &gt;. The lab consists of:</p>
+<ul>
+<li>Create a data type <code>ArithExpr</code> to represent an expression</li>
+<li>Implement a function <code>eval</code> to evaluate the expression to a number</li>
+<li>Implement a fuction <code>simpleParseExpr</code> to parse a string into an expression</li>
+<li>Use the functions above to read user input and using <code>fmap</code> parse the string into an integer and return the result</li>
+<li>Plug into a calculator program</li>
+</ul>
+<h1 id="skeleton-program">Skeleton Program</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.IO</span>
+
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+     putStr <span class="st">&quot;&gt; &quot;</span>
+     hFlush stdout
+     line <span class="ot">&lt;-</span> getLine
+     putStrLn line
+     main</code></pre>
+<p>This is the basis for the calculator program. It is your responsibility to incorporate your calculator into this base program.</p>
+<h1 id="arithexpr"><code>ArithExpr</code></h1>
+<p>Defining the <code>ArithExpr</code> Data Type. Recursion is the name of the game.</p>
+<p>This data type should represent</p>
+<ul>
+<li>a constructor <code>Number</code> for positive or negative integers</li>
+<li>Addition and Multiplication operators represented by the constructors <code>Plus</code> and <code>Mult</code>. These operators are most easily defined as a data constructor taking two arguments.</li>
+<li>Division <code>Div</code> and <code>Mod</code> should follow the conventions from lab1 (possibly use <code>quot</code> or <code>div</code> here)</li>
+<li>precedence should be <code>Mod &gt; Div &gt; Mult &gt; Plus</code></li>
+</ul>
+<p>The abstract <code>ArithExpr</code> form for <code>(2+3)*(3+2)</code> would be</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="dt">Mult</span> (<span class="dt">Plus</span> (<span class="dt">Number</span> <span class="dv">2</span>) (<span class="dt">Number</span> <span class="dv">3</span>)) (<span class="dt">Plus</span> (<span class="dt">Number</span> <span class="dv">3</span>) (<span class="dt">Number</span> <span class="dv">2</span>)))</code></pre>
+<h1 id="evaluating-an-arithexpr">Evaluating an <code>ArithExpr</code></h1>
+<p>Again, use recursion. <code>eval</code> should be a function that takes <code>ArithExpr</code> and outputs a number. This is the first thing to get working. Check that it works by ensuring that you get the right outputs for:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="dt">Mult</span> (<span class="dt">Plus</span> (<span class="dt">Number</span> <span class="dv">2</span>) (<span class="dt">Number</span> <span class="dv">3</span>)) (<span class="dt">Plus</span> (<span class="dt">Number</span> <span class="dv">3</span>) (<span class="dt">Number</span> <span class="dv">2</span>)))
+(<span class="dt">Mod</span> (<span class="dt">Plus</span> (<span class="dt">Number</span> <span class="dv">2</span>) (<span class="dt">Number</span> <span class="dv">3</span>)) (<span class="dt">Div</span> (<span class="dt">Number</span> <span class="dv">13</span>) (<span class="dt">Number</span> <span class="dv">6</span>)))
+(<span class="dt">Plus</span> (<span class="dt">Mod</span> (<span class="dt">Mult</span> (<span class="dt">Number</span> <span class="dv">2</span>) (<span class="dt">Number</span> <span class="dv">3</span>)) (<span class="dt">Div</span> (<span class="dt">Number</span> <span class="dv">13</span>) (<span class="dt">Number</span> (<span class="fu">-</span><span class="dv">6</span>)))) (<span class="dt">Plus</span>
+(<span class="dt">Number</span> (<span class="fu">-</span><span class="dv">10</span>)) (<span class="dt">Number</span> <span class="dv">2</span>)) )</code></pre>
+<p>and some other expression. Generate your own simple ones and make sure that things work. Put those in your sample runs file <code>TestLab3.hs</code>.</p>
+<h1 id="parsing-a-string-to-arithexpr">Parsing a String to <code>ArithExpr</code></h1>
+<p>The input will be <code>*, -, +, [0-9], (, ), %, /</code> and the <code>-</code> will always precede a number <code>[0-9]</code>.</p>
+<ul>
+<li>Remove whitespace with <code>isSpace</code> in the library <code>Data.Char</code></li>
+<li>Tokenize. Break-up the expression into tokens: numbers (positive or negative), operators, or parenthetical expression.</li>
+<li>The functions <code>dropWhile</code>, <code>takeWhile</code>, and <code>span</code> in <code>Data.List</code> are helpful here. Also <code>isDigit</code> in <code>Data.Char</code> is useful.</li>
+<li>Turn the tokens into an <code>ArithExpr</code>. Use <code>read</code> to get integers out <code>(read x :: Int)</code>. Thinking about arithmetic it makes sense to split the list at the operator of least precedence and then recurse on the elements.</li>
+</ul>
+<p>Work incrementally. Start with a tokenizer, begin by tokenezing simple expressions:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dv">1</span><span class="fu">+</span><span class="dv">2</span>
+<span class="dv">1</span> <span class="fu">+</span> <span class="dv">2</span>
+<span class="dv">1</span> <span class="fu">*</span> <span class="fu">-</span><span class="dv">2</span></code></pre>
+<p>then move to harder and harder expressions</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">(<span class="dv">1</span><span class="fu">+</span><span class="dv">2</span>)
+ (<span class="dv">1</span> <span class="fu">+</span> <span class="dv">2</span> )
+(<span class="fu">-</span><span class="dv">10</span> <span class="fu">+</span> <span class="dv">2</span>) <span class="fu">*</span> <span class="dv">5</span></code></pre>
+<p>Put the <code>tokenizer</code> sample run tests in <code>TestLab3.hs</code>. Once you are convinced the tokenizer can handle all simple expressions (and more complicated ones), ensure that <code>eval</code> can handle all of the expressions.</p>
+<h1 id="tokens-to-arithexpr">Tokens to <code>ArithExpr</code></h1>
+<p>Expanding on the third step a little more: think about the expression <code>4*3+4</code> which should be broken up into <code>4*3, +, 4</code>. The function break will be useful for this. I called my function that does this <code>buildExpr</code> and in the above example <code>buildExpr</code> would be recursively applied so you would get <code>buildExpr [&quot;4&quot;,&quot;*&quot;,&quot;-32&quot;]</code>. You may assume all inputs are well-formed.</p>
+<h1 id="submit">Submit</h1>
+<p>Make a <code>lab3</code> folder with <code>Lab3.hs</code> and <code>TestLab3.hs</code>.</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
