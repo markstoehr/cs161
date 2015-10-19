@@ -105,7 +105,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h1 id="tokens-to-arithexpr">Tokens to <code>ArithExpr</code></h1>
 <p>Expanding on the third step a little more: think about the expression <code>4*3+4</code> which should be broken up into <code>4*3, +, 4</code>. The function break will be useful for this. I called my function that does this <code>buildExpr</code> and in the above example <code>buildExpr</code> would be recursively applied so you would get <code>buildExpr [&quot;4&quot;,&quot;*&quot;,&quot;-32&quot;]</code>. You may assume all inputs are well-formed.</p>
 <h1 id="submit">Submit</h1>
-<p>Make a <code>lab3</code> folder with <code>Lab3.hs</code> and <code>TestLab3.hs</code>. <code>TestLab3.hs</code> should have sample runs implemented as tests, e.g.:</p>
+<p>Make a <code>lab3</code> folder with <code>Lab3.hs</code> and <code>TestLab3.hs</code>. <code>Lab3.hs</code> should export functions to test for <code>TestLab3.hs</code> follow the syntax in <code>Lab1.hs</code> from the first lab to understand modules (or check the course notes). <code>TestLab3.hs</code> should have sample runs implemented as tests, e.g.:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">test1 <span class="fu">=</span> eval (<span class="dt">Plus</span> (<span class="dt">Number</span> <span class="dv">1</span>) (<span class="dt">Number</span> <span class="dv">1</span>)) <span class="fu">==</span> <span class="dv">0</span></code></pre>
 <p>and a final tests list:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">tests <span class="fu">=</span> [test1, test2, <span class="fu">...</span>, testn]
