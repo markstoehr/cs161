@@ -105,7 +105,14 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <h1 id="tokens-to-arithexpr">Tokens to <code>ArithExpr</code></h1>
 <p>Expanding on the third step a little more: think about the expression <code>4*3+4</code> which should be broken up into <code>4*3, +, 4</code>. The function break will be useful for this. I called my function that does this <code>buildExpr</code> and in the above example <code>buildExpr</code> would be recursively applied so you would get <code>buildExpr [&quot;4&quot;,&quot;*&quot;,&quot;-32&quot;]</code>. You may assume all inputs are well-formed.</p>
 <h1 id="submit">Submit</h1>
-<p>Make a <code>lab3</code> folder with <code>Lab3.hs</code> and <code>TestLab3.hs</code>.</p>
+<p>Make a <code>lab3</code> folder with <code>Lab3.hs</code> and <code>TestLab3.hs</code>. <code>TestLab3.hs</code> should have sample runs implemented as tests, e.g.:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">test1 <span class="fu">=</span> eval (<span class="dt">Plus</span> (<span class="dt">Number</span> <span class="dv">1</span>) (<span class="dt">Number</span> <span class="dv">1</span>)) <span class="fu">==</span> <span class="dv">0</span></code></pre>
+<p>and a final tests list:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">tests <span class="fu">=</span> [test1, test2, <span class="fu">...</span>, testn]
+testAll <span class="fu">=</span> all tests</code></pre>
+<p>You are primarily evaluated on whether you correctly implement the calculator.</p>
+<h1 id="extra-credit">Extra-Credit</h1>
+<p>For extra-credit implement a file <code>Lab3Rational.hs</code> and <code>TestLab3Rational.hs</code> which works with rational numbers. The inputs should be the same expressions but the outputs are now rational numbers so that the output for <code>.75</code> would be <code>3 / 4</code>. <code>TestLab3Rational.hs</code> should also throw an error properly if there is a division by zero.</p>
 
         </div>
         <div id="footer">
