@@ -29,6 +29,8 @@
     
 </div>
 
+<h1 id="announcements">Announcements</h1>
+<p>Office hours 12 - 3:15 on Wednesday (this week only). Normal office hours resume next week.</p>
 <h1 id="building-a-simple-haskell-calculator">Building a Simple Haskell Calculator</h1>
 <p>Later in the course you will consider monadic parsing but in this lab we will focus on the simple parsing problem of constructing a calculator.</p>
 <p>The calculator should work as follows:</p>
@@ -89,6 +91,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <li>Tokenize. Break-up the expression into tokens: numbers (positive or negative), operators, or parenthetical expression.</li>
 <li>The functions <code>dropWhile</code>, <code>takeWhile</code>, and <code>span</code> in <code>Data.List</code> are helpful here. Also <code>isDigit</code> in <code>Data.Char</code> is useful.</li>
 <li>Turn the tokens into an <code>ArithExpr</code>. Use <code>read</code> to get integers out <code>(read x :: Int)</code>. Thinking about arithmetic it makes sense to split the list at the operator of least precedence and then recurse on the elements.</li>
+<li><code>show x</code> turns and <code>Int</code> to <code>String</code></li>
 </ul>
 <p>Work incrementally. Start with a tokenizer, begin by tokenezing simple expressions:</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dv">1</span><span class="fu">+</span><span class="dv">2</span>
