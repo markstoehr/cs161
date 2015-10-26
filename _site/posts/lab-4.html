@@ -32,7 +32,7 @@
 <h1 id="announcements">Announcements</h1>
 <p>Office hours 1-2pm on Wednesday and Thursday.</p>
 <h1 id="counting-words">Counting Words</h1>
-<p>In this lab we will produce a sorted word count from input text. The input will be a text stream as in the <code>rot13</code> program and you will output a list of words with their associated counts such that the words are sorted and all in lower-case. E.g. the text</p>
+<p>In this lab we will produce a sorted word count from input text. The input will be a text stream as in the <code>rot13</code> program and you will output a list of words with their associated counts such that the words are sorted (<code>String</code> is in typeclass <code>Ord</code> and so that ordering is acceptable) and all in lower-case. E.g. the text</p>
 <pre><code>A parser for things
 Is a function from strings
 To lists of pairs
@@ -51,7 +51,7 @@ parser 1
 strings 2
 things 2
 to 1</code></pre>
-<p>Implement this as a program with the exact name <code>WordCount.hs</code> such that it can be run as <code>./WordCount</code> like the rot13 program. It should be in your <code>lab4/</code> directory of your laboratory repository. A word is defined as a contiguous sequence of letters with the characters <code>'\''</code> and <code>'-'</code>.</p>
+<p>Implement this as a program with the exact name <code>WordCount.hs</code> such that it can be run as <code>./WordCount</code> like the rot13 program. It should be in your <code>lab4/</code> directory of your laboratory repository. A word is defined as a contiguous sequence of letters with the characters <code>'\''</code> and <code>'-'</code>. Note that <code>'\'':[] == &quot;'&quot;</code>.</p>
 <h1 id="collecting-permutations">Collecting Permutations</h1>
 <p>Some words are permutations of each other: e.g. <code>[&quot;outs&quot;, &quot;oust&quot;]</code> or <code>[&quot;portions&quot;, &quot;positron&quot;]</code>. Write a second program which outputs the permutations in sorted order. E.g. given text</p>
 <pre><code>On the Outer Pyre steps the three purest usurpers swore to their vile
