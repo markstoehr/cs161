@@ -68,6 +68,9 @@ pursuers, usurpers
 swore, worse
 there, three</code></pre>
 <p>The words on a single line should be sorted as well as the lines themselves in the text output. Use the definition of a word given above. This program should be implemented with the exact name <code>CollectPermutations.hs</code> in your <code>lab4/</code> folder of your subversion repository. It should take in text just like the <code>rot13</code> program.</p>
+<p>To perform the sort you will likely want to use the <code>Ord</code> typeclass</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Ord</span>  <span class="fu">....</span>  <span class="kw">where</span>
+   <span class="fu">...</span> <span class="fu">&lt;=</span> <span class="fu">...</span> <span class="fu">=</span> <span class="fu">...</span></code></pre>
 <h1 id="to-hand-in">To hand in</h1>
 <p>Your <code>lab4/</code> directory should have <code>CollectPermutations.hs</code> and <code>WordCount.hs</code>, each of which can be compiled to take in text input and output the desired text.</p>
 
