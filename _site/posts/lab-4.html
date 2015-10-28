@@ -73,6 +73,25 @@ there, three</code></pre>
    <span class="fu">...</span> <span class="fu">&lt;=</span> <span class="fu">...</span> <span class="fu">=</span> <span class="fu">...</span></code></pre>
 <h1 id="to-hand-in">To hand in</h1>
 <p>Your <code>lab4/</code> directory should have <code>CollectPermutations.hs</code> and <code>WordCount.hs</code>, each of which can be compiled to take in text input and output the desired text.</p>
+<h1 id="extra-credit">Extra Credit</h1>
+<p>Two extra credit assignments:</p>
+<ol style="list-style-type: decimal">
+<li>Use a <a href="https://en.wikipedia.org/wiki/Trie">trie</a> as the internal datastructure for the word counts</li>
+<li><p>Write a program <code>WordSegmenter.hs</code> that uses <code>/usr/share/dict/words</code> to segment input text: e.g. the input</p>
+<p>echo “Itisappropriatetostartthestudyofmathematicallogicbyinquiringwhatmathematicallogicis” | ./WordSegmenter</p></li>
+</ol>
+<p>should output:</p>
+<pre><code>It is appropriate to start the study of mathematical logic by inquiring what
+mathematical logic is</code></pre>
+<p>You can start second extra credit program with a file</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.IO</span>
+<span class="kw">import </span><span class="dt">WordSegmenterLib</span>
+       
+main <span class="fu">=</span> <span class="kw">do</span>
+    handle <span class="ot">&lt;-</span> openFile <span class="st">&quot;/usr/share/dict/words&quot;</span> <span class="dt">ReadMode</span>
+    contents <span class="ot">&lt;-</span> hGetContents handle
+    hClose handle</code></pre>
+<p>and you’ll need to add in logic to take input as well as implement a file <code>WordSegmenterLib.hs</code> which will contain the module <code>WordSegmenterLib</code> that contains your segmentation logic.</p>
 
         </div>
         <div id="footer">
