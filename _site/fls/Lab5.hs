@@ -2,13 +2,10 @@ import Control.Applicative
 import Data.Char
 import Data.Tuple
 
-newtype Parser result = Parser { runParser :: String ->
-                                              [(String, result)] }
+newtype Parser result = Parser { runParser :: String -> [(String, result)] }
 
 succeed :: r -> Parser r
 succeed v = Parser $ \stream -> [(stream, v)]
-
-
 
 instance Functor Parser where
   fmap f (Parser pattern) = Parser $ (fmap . fmap . fmap) f pattern
@@ -51,13 +48,14 @@ end = Parser $ \stream -> [(stream, ()) | null stream]
 just :: Parser r -> Parser r
 just pattern = const <$> pattern <*> end
 
-(<.>) :: Parser r1 -> Parser r2 -> Parser r2
-parser1 <.> parser2 = fmap (flip const) parser1 <*> parser2
+(.>) :: Parser r1 -> Parser r2 -> Parser r2
+parser1 .> parser2 = fmap (flip const) parser1 <*> parser2
+
+(<.) :: Parser r1 -> Parser r2 -> Parser r1
+parser1 <. parser2 = fmap const parser1 <*> parser2
 
 (<?>) :: (r -> Bool) -> Parser r -> Parser r
 predicate <?> (Parser parser)
   = Parser $ \s -> [(t, r) | (t, r) <- parser s, predicate r]
 
--- should parse only if the string has one or more digits in a row
 number = (fmap (:) digit) <*> (number <|> succeed [])
-  
