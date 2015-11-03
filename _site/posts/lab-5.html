@@ -31,9 +31,27 @@
 
 <h1 id="announcements">Announcements</h1>
 <p>Office hours 1-2pm on Wednesday and Thursday. For the quarter you can take two 24-hour extensions.</p>
-<h1 id="applicative-parsers">Applicative Parsers</h1>
+<h1 id="submission-guidelines">Submission Guidelines</h1>
 <p>In today’s <a href="http://cmsc-16100.cs.uchicago.edu/2015/Lectures/lecture-19.php">class notes</a> applicative parsers are covered loosely based on the classic <a href="http://people.cs.uu.nl/jeroen/article/parsers/parsers.ps">Functional Parsers</a> article by Joroen Fokker. The goal here is to use these ideas to build a reverse polish notation calculator.</p>
-<p>Some code to get you started is available on <a href="../fls/Lab5.hs">Lab5.hs</a>. The task is to use this code to implement a reverse polish notation calculator that supports <code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>,</p>
+<p>Some code to get you started is available on <a href="../fls/Lab5.hs">Lab5.hs</a>. The task is to use this code to implement a reverse polish notation calculator that supports <code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>, <code>%</code>, <code>^</code>, <code>!</code>, and <code>|</code>. Here <code>/</code> will be <code>div</code> and <code>%</code> is <code>mod</code>. Your parser should accept arbitrary ASCII strings and throw an error <code>No Parse</code> if the string cannot be computed using a reverse polish notation calculator. The accepted inputs are numbers and operators. Note that <code>34 52 %</code> would be <code>mod 34 52</code> and <code>3823 323 /</code> is <code>div 3823 323</code>.</p>
+<p>Exponentiation is <code>^</code> and corresponds to the Haskell operator <code>^</code>. <code>!</code> is the factorial function (defined only on the non-negative integers). The unary <code>|</code> takes the absolute value of the input. You should also be able to handle negative numbers which are entered in as <code>(-99)</code> as well as positive numbers <code>(8)</code>. You do not need to handle nesting of parentheses.</p>
+<p>In your <code>lab5/</code> folder of your repository you should have three files (with names exactly matching–including case):</p>
+<ol style="list-style-type: decimal">
+<li><code>Lab5.hs</code> which should include a module <code>Lab5</code></li>
+<li><code>Main.hs</code> which will import functions from <code>Lab5</code> to implement a REPL (read-eval-print-loop) executable reverse polish notation calculator.</li>
+<li><code>Tests.hs</code> a file of tests. In this lab we will have 100% test coverage so write one test per function in <code>Lab5.hs</code> (and not just the functions that you implement, this includes the ones already in the file). This should also be an executable so that if we compile it and run <code>./Test</code> we get a print out of the number of passing tests.</li>
+</ol>
+<p>The REPL implemented in <code>Main.hs</code> should be such that if we call <code>./Main</code> then it will present to stdout a session which would allow the following interaction:</p>
+<pre class="shell"><code>&gt; 3 4 +
+7
+&gt; +
+No Parse
+&gt;   10   3 ( - 80) 9 / + 5 - *
+60</code></pre>
+<p>so that there is a <code>&gt;</code> before the are to input the commands and the output is relayed below.</p>
+<h1 id="functional-parsing-with-applicative">Functional Parsing with Applicative</h1>
+<p>You have now written several calculators, this calculator will be different than the previous ones because we emphasize (and indeed require) the use of parser combinators. Parser combinators are higher order functions that can be used to construct basic parsers and to combine parsers to build more complex ones. Moreover, they allow one to write the grammar specifying the language to be parsed as code. For the case of calculators this means that we can specify the computation with very few lines once we have a parsing library.</p>
+<p>The basics are already implemented, but these notes serve as an explanation for what is going on.</p>
 
         </div>
         <div id="footer">

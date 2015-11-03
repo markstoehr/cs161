@@ -58,6 +58,5 @@ parser1 <.> parser2 = fmap (flip const) parser1 <*> parser2
 predicate <?> (Parser parser)
   = Parser $ \s -> [(t, r) | (t, r) <- parser s, predicate r]
 
--- should parse only if the string has one or more digits in a row
 number = (fmap (:) digit) <*> (number <|> succeed [])
   
