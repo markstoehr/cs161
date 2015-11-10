@@ -47,7 +47,7 @@
 &gt; +
 No Parse
 &gt;   10   3 ( - 80) 9 / + 5 - *
-60</code></pre>
+-110</code></pre>
 <p>so that there is a <code>&gt;</code> before the are to input the commands and the output is relayed below.</p>
 <h1 id="functional-parsing-with-applicative">Functional Parsing with Applicative</h1>
 <p>The distinction between this calculator and previous calculators is that you wil be specifically checking for well-formed input. You are allowed to use Haskell’s internal arithmetic to perform the computations, but you will have to implement a <em>grammar</em> to recognize which inputs are valid and which are invalid.</p>
@@ -160,7 +160,113 @@ satisfy p <span class="fu">=</span> <span class="dt">Parser</span> <span class="
 <span class="dt">No</span> <span class="dt">Parse</span>
 <span class="fu">&gt;</span> eight
 <span class="dt">No</span> <span class="dt">Parse</span></code></pre>
-<p>This intermediate example is a good place to start. The next section we will show a principled way to handle numbers.</p>
+<p>This intermediate example is a good place to start. The next section we will show a principled way to handle numbers. The previous calculator is a good template for <code>Main.hs</code></p>
+<h2 id="handling-complete-numbers">Handling Complete Numbers</h2>
+<p>So we have a parser for single digits. It should accept a single digit and reject everything else. Now, we want to actually work with the complete numbers. In order to do this we want to precisely define the set of strings which are acceptable numbers, to start, and to keep things simple we focus on the case of the positive integers. Once we are sure that a given string has exactly one number in it we can call <code>read</code> on that string and then get the number out. So our parser will look like this:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> (runParser <span class="fu">$</span> fmap (read<span class="ot"> ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>) number) <span class="st">&quot;2838&quot;</span>
+[(<span class="st">&quot;&quot;</span>, <span class="dv">2838</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> snd <span class="fu">$</span> (<span class="fu">!!</span><span class="dv">0</span>) (runParser <span class="fu">$</span> fmap (read<span class="ot"> ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>) number) <span class="st">&quot;2838&quot;</span>
+<span class="dv">2838</span></code></pre>
+<p>And we will explain how to get here in this section.</p>
+<p>Roughly, there are two problems we need to solve:</p>
+<ol style="list-style-type: decimal">
+<li>Determining the appropriate output</li>
+<li>Deciding when an input is valid</li>
+</ol>
+<p>For the first problem the output of a parser <code>number</code> should be the string representation of the number: just as the output of <code>digit</code> should be a character digit. The second problem means that only some input streams will output anything so:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser number <span class="st">&quot;X2838&quot;</span>
+[]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser number <span class="st">&quot;&quot;</span>
+[]</code></pre>
+<p>We will handle the string output problem first.</p>
+<h3 id="charany"><code>charAny</code></h3>
+<p>We start with a simpler question. Suppose we had a parser <code>charAny</code> which accepts every character and returns that character. Before you read below, try to implement it yourself:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">charAny ::</span> <span class="dt">Parser</span> <span class="dt">Char</span>
+charAny <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> <span class="kw">case</span> s <span class="kw">of</span>
+	[] <span class="ot">-&gt;</span> []
+	c<span class="fu">:</span>cs <span class="ot">-&gt;</span> [(cs, c)]</code></pre>
+<p>which means that</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny <span class="st">&quot;X2838&quot;</span>
+[(<span class="st">&quot;2838&quot;</span>, <span class="ch">'X'</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny <span class="st">&quot;dog&quot;</span>
+[(<span class="st">&quot;og&quot;</span>, <span class="ch">'d'</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny <span class="st">&quot;&quot;</span>
+[]</code></pre>
+<h3 id="stringany"><code>stringAny</code></h3>
+<p>A variant on the above is one that accepts all two character strings:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;X2838&quot;</span>
+[(<span class="st">&quot;838&quot;</span>, <span class="st">&quot;X2&quot;</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;dog&quot;</span>
+[(<span class="st">&quot;g&quot;</span>, <span class="st">&quot;do&quot;</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;do&quot;</span>
+[(<span class="st">&quot;&quot;</span>, <span class="st">&quot;do&quot;</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;&quot;</span>
+[]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;d&quot;</span>
+[]</code></pre>
+<p>To define <code>charAny2</code> we will find it convenient to define <code>charAny1</code> which parses a length one string. <code>charAny1</code> is similar to <code>charAny</code> but has type <code>charAny1 :: Parser String</code> whereas <code>charAny</code> has type <code>charAny :: Parser Char</code>. So we have:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny1 <span class="st">&quot;X2838&quot;</span>
+[(<span class="st">&quot;2838&quot;</span>, <span class="st">&quot;X&quot;</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny1 <span class="st">&quot;dog&quot;</span>
+[(<span class="st">&quot;og&quot;</span>, <span class="st">&quot;d&quot;</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;do&quot;</span>
+[(<span class="st">&quot;o&quot;</span>, <span class="st">&quot;d&quot;</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;&quot;</span>
+[]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;d&quot;</span>
+[(<span class="st">&quot;&quot;</span>, <span class="st">&quot;d&quot;</span>)]</code></pre>
+<p>We define <code>charAny1</code> using <code>charAny</code>:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">charAny1 ::</span> <span class="dt">Parser</span> <span class="dt">String</span>
+charAny1 <span class="fu">=</span> fmap (<span class="fu">:</span>[]) charAny</code></pre>
+<p>recall that</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">Parser</span> <span class="kw">where</span>
+  fmap f p <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> [(t, f a) <span class="fu">|</span> (t, a) <span class="ot">&lt;-</span> runParser p s]</code></pre>
+<p>which gives us a definition for <code>fmap</code>. Equivalently,</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">charAny1 <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> [ (t, (<span class="fu">:</span>[]) a)
+	                      <span class="fu">|</span> (t, a) <span class="ot">&lt;-</span> runParser charAny s]</code></pre>
+<p>and also</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">charAny1 <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> [ (t, a<span class="fu">:</span><span class="st">&quot;&quot;</span>)
+	                      <span class="fu">|</span> (t, a) <span class="ot">&lt;-</span> runParser charAny s]</code></pre>
+<p>these definitions are all more concisely captured by</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">charAny1 <span class="fu">=</span> fmap(<span class="fu">:</span>[]) charAny</code></pre>
+<h3 id="charany2"><code>charAny2</code></h3>
+<p>We can then use <code>charAny1</code> to get <code>charAny2</code>. If we successfuly parse a string <code>s</code> then the result of <code>charAny2</code> should be a string of length two: e.g. <code>x:y:[]</code> where <code>x</code> and <code>y</code> are of type <code>Char</code>. With <code>charAny1</code> we see how to construct <code>y:[]</code>, but we need to also need to apply <code>(:x)</code> to <code>y:[]</code>. To get the function <code>(:x)</code> as a result we, again, use <code>fmap</code> to define <code>charCons</code></p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">charCons <span class="fu">=</span> fmap (<span class="fu">:</span>) charAny</code></pre>
+<p>Note that <code>charCons :: Parser (String -&gt; String)</code> since the type of <code>(:)</code> is <code>Char -&gt; [Char] -&gt; [Char]</code> in this context. Now we need to combine this with <code>charAny1</code>:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">charAny2 <span class="fu">=</span> charCons <span class="fu">&lt;*&gt;</span> charAny1</code></pre>
+<p>where</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Applicative</span> <span class="dt">Parser</span> <span class="kw">where</span>
+  pure v <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> [(s, a)]
+  p1 <span class="fu">&lt;*&gt;</span> p2 <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> [ (u, f a)
+                             <span class="fu">|</span> (t, f) <span class="ot">&lt;-</span> runParser p1 s
+							 , (u, a) <span class="ot">&lt;-</span> runParser p2 t
+							 ]</code></pre>
+<p>Thus we see that <code>&lt;*&gt;</code>, ap, parsers with <code>p1</code> then with <code>p2</code> and applies the function resulting from <code>p1</code> to the result of <code>p2</code>. This works well for constructing <code>charAny2</code>. We use <code>charCons</code> to create <code>(:x)</code> where <code>x</code> is the result character and then we sequence it with <code>charAny1</code> which handles a length one string.</p>
+<h3 id="charany3-charany4-etc."><code>charAny3</code>, <code>charAny4</code>, etc.</h3>
+<p>We can continue using the recursive definition to handle longer and longer strings:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">charAny3 <span class="fu">=</span> charCons <span class="fu">&lt;*&gt;</span> charAny2
+charAny4 <span class="fu">=</span> charCons <span class="fu">&lt;*&gt;</span> charAny3</code></pre>
+<p>so that</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny4 <span class="st">&quot;X2838&quot;</span>
+[(<span class="st">&quot;8&quot;</span>, <span class="st">&quot;X283&quot;</span>)]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny1 <span class="st">&quot;dog&quot;</span>
+[]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;do&quot;</span>
+[]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;&quot;</span>
+[]
+<span class="fu">*</span><span class="dt">Main</span><span class="fu">&gt;</span> runParser charAny2 <span class="st">&quot;d&quot;</span>
+[]</code></pre>
+<h3 id="stringany-1"><code>stringAny</code></h3>
+<p>We now want to describe a pattern matcher that matches a string of any non-zero length:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">stringAny ::</span> <span class="dt">Parser</span> <span class="dt">String</span>
+stringAny <span class="fu">=</span> charCons <span class="fu">&lt;*&gt;</span> (stringAny <span class="fu">&lt;|&gt;</span> pure <span class="st">&quot;&quot;</span>)</code></pre>
+<p>Here we are using alternative <code>&lt;|&gt;</code>:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Alternative</span> <span class="kw">where</span>
+  empty <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> const []
+  p1 <span class="fu">&lt;|&gt;</span> p2 <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> (runParser p1) <span class="fu">++</span> (runParser p2)</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">empty <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> []</code></pre>
+<p>Note that here we have <code>&lt;|&gt;</code> parses in parallel, we run parser <code>p1</code> on the string then we run parser <code>p2</code> on the string separately and then combine their outputs using concat <code>++</code>. This captures that <code>stringAny</code> either continues parsing or it stops.</p>
 
         </div>
         <div id="footer">
