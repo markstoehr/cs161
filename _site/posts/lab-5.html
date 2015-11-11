@@ -267,6 +267,18 @@ stringAny <span class="fu">=</span> charCons <span class="fu">&lt;*&gt;</span> (
   p1 <span class="fu">&lt;|&gt;</span> p2 <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> (runParser p1) <span class="fu">++</span> (runParser p2)</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">empty <span class="fu">=</span> <span class="dt">Parser</span> <span class="fu">$</span> \s <span class="ot">-&gt;</span> []</code></pre>
 <p>Note that here we have <code>&lt;|&gt;</code> parses in parallel, we run parser <code>p1</code> on the string then we run parser <code>p2</code> on the string separately and then combine their outputs using concat <code>++</code>. This captures that <code>stringAny</code> either continues parsing or it stops.</p>
+<h2 id="handling-spaces">Handling Spaces</h2>
+<p>In order to handle spaces we use <code>.&gt;</code> and <code>&lt;.</code>. These are short hand for the functions <code>fmap (flip const) parser1 &lt;*&gt; parser2</code> and <code>fmap const parser1 &lt;*&gt; parser2</code>, respectively. They sequence one parser after the other, in <code>.&gt;</code> the result of the first parser is ignored and in <code>&lt;.</code> the output of the second parser is ignored.</p>
+<p>We can handle spaces with this paradigm. <code>space</code> is our spaces parser and it is defined <code>space = satisfy isSpace</code>. We can create a pattern for matching spaces using the recursive techniques from above. Let</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">someSpaces <span class="fu">=</span> space <span class="fu">.&gt;</span> (someSpaces <span class="fu">&lt;|&gt;</span> succeed [])</code></pre>
+<p>recall that this is equivalent to</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">someSpaces <span class="fu">=</span> (fmap (flip const) space) <span class="fu">&lt;*&gt;</span> (someSpaces <span class="fu">&lt;|&gt;</span> succeed [])</code></pre>
+<p>which shows that we define <code>someSpaces</code> similar to <code>stringAny</code> or <code>number</code>. It reads a single space then it either reads more spaces (recursing) or it simply exits. The result of <code>someSpaces</code> will always be the empty string <code>&quot;&quot;</code> (convince yourself that this is true).</p>
+<p>We can also define <code>spaces = someSpaces &lt;|&gt; succeed []</code> which matches spaces or nothing (so handles 0 or more spaces), which is different from <code>someSpaces</code> which handles ` or more spaces. We these two in line we can now write a pattern for numbers with spaces:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">numberWithSpaces <span class="fu">=</span> spaces <span class="fu">.&gt;</span> number <span class="fu">&lt;.</span> spaces</code></pre>
+<p>For two numbers with spaces (e.g &quot; 382 9499“) we want to ensure that there is a space matched between the two numbers so we will write</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">numbers2WithSpaces <span class="fu">=</span> spaces <span class="fu">.&gt;</span> number <span class="fu">&lt;.</span> someSpaces <span class="fu">.&gt;</span> number <span class="fu">&lt;.</span> spaces</code></pre>
+<p>The next step is to write a parser that handles multiple numbers. Look at the way we defined <code>number</code> using recursion. Something similar will work here as well.</p>
 
         </div>
         <div id="footer">
