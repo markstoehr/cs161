@@ -141,7 +141,7 @@ fullCardDeck <span class="fu">=</span> [ <span class="dt">PlayingCard</span> s v
 </ol>
 <p>This is a basic function that can help you shuffle a deck. A common interview question is to implement deck shuffling. A deck shuffling function should induce a uniform probability distribution over all permutations: i.e. all orderings of the cards should be equally likely. You will want to write this recursively, handling the base case for an empty deck, and then using an inductive step: using <code>removeCard</code> and then recursing.</p>
 <ol start="6" style="list-style-type: decimal">
-<li><p>Implement a function <code>shuffleDeck</code> which takes a list of playing cards, <code>[PlayingCard]</code>. Test that it returns random permutations.</p></li>
+<li><p>Implement a function <code>shuffleDeck</code> which takes a list of playing cards, <code>[PlayingCard]</code>. Test that it returns random permutations. To write this start by considering the case with one card. Then consider the case with two cards. Then consider the case with three cards. Try to see if you can implement the three card case by using the two card function. Test the uniformity of shuffles by looking at small decks and checking statistics.</p></li>
 <li><p>Implement a function <code>shuffleADeck</code> which generates and output of a shuffle of 52 cards. Test that it outputs that many cards.</p></li>
 </ol>
 <h2 id="extra-credit-approximating-pi">Extra Credit: Approximating Pi</h2>
