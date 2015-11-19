@@ -135,7 +135,7 @@ runState<span class="ot"> testState ::</span> <span class="dt">String</span> <sp
 fullCardDeck <span class="fu">=</span> [ <span class="dt">PlayingCard</span> s v <span class="fu">|</span> s <span class="ot">&lt;-</span> allsuits, v <span class="ot">&lt;-</span> allvals ] <span class="kw">where</span>
         allvals <span class="fu">=</span> <span class="dt">King</span> <span class="fu">:</span> <span class="dt">Queen</span> <span class="fu">:</span> <span class="dt">Jack</span> <span class="fu">:</span> [ <span class="dt">NumberCard</span> i <span class="fu">|</span> i <span class="ot">&lt;-</span> [<span class="dv">1</span><span class="fu">..</span><span class="dv">10</span>] ]
         allsuits <span class="fu">=</span> [<span class="dt">Hearts</span>, <span class="dt">Diamonds</span>, <span class="dt">Spades</span>, <span class="dt">Clubs</span>]</code></pre>
-<p>Typeout the above definitions in your <code>rand.hs</code> solution file.</p>
+<p>Typeout the above definitions in your <code>Lab6.hs</code> solution file.</p>
 <ol start="5" style="list-style-type: decimal">
 <li>Implement a function <code>removeCard</code>, which will be monadic. Given a list of Playing Cards, it should pick a random card out of the list, return the card and the list with the card removed (as a tuple potentially). Test that this functions correctly</li>
 </ol>
