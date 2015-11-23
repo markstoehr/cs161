@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CS161 Labs - Lab 7: Polyominoes</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+	<link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">CS161 Labs</a>
+            </div>
+            <div id="navigation">
+                <a href="../">Home</a>
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Lab 7: Polyominoes</h1>
+
+            <div class="info">
+    Posted on November 22, 2015
+    
+</div>
+
+<p>In this lab, the aim is to grok the principles underlying the <a href="http://cmsc-16100.cs.uchicago.edu/2015/Lectures/20-monad-transformers.php">sudoku solver</a>. We will use very similar code to solve a related problem of <span class="math"><em>n</em></span>-onimoes a special case of <a href="https://en.wikipedia.org/wiki/Exact_cover">exact-cover</a>. In our case the exact-cover problem, although more general, is not much harder to solve than these specific instantiations. In exact cover we are given a collection of sets and the goal is to select a mutually disjoint subcollection of them such that their union contains all the elements. “Cover” refers to the fact that the union contains all the elements; “exact” means that each set in the cover is disjoint from all the other sets–e.g. elements occur in only one of the selected sets.</p>
+<p>This lab is short and meant to be finished by end-of-day Wednesday. The problem is to build a program which will have the exact name <code>ExactCover</code> derived from the source <code>ExactCover.hs</code> which can solve exact cover instances.</p>
+<p>You will run the program like so:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">./ExactCover</span> <span class="kw">&lt;</span> exact-cover1.txt
+<span class="kw">problem</span>:
+
+   <span class="kw">Elements</span>: [<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;hi&quot;</span>]
+
+   <span class="kw">Sets</span>: [[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;hi&quot;</span>],[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>],[<span class="st">&quot;hi&quot;</span>]]
+
+
+<span class="kw">solutions</span>:
+
+   <span class="kw">2</span> solutions
+   <span class="kw">fromList</span> [(<span class="st">&quot;1&quot;</span>,[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;hi&quot;</span>]),<span class="kw">(</span><span class="st">&quot;2&quot;</span>,[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;hi&quot;</span>]<span class="kw">)</span>,<span class="kw">(</span><span class="st">&quot;3&quot;</span>,[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;hi&quot;</span>]<span class="kw">)</span>,<span class="kw">(</span><span class="st">&quot;hi&quot;</span>,[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;hi&quot;</span>]<span class="kw">)</span>]
+   <span class="kw">fromList</span> [(<span class="st">&quot;1&quot;</span>,[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>]),<span class="kw">(</span><span class="st">&quot;2&quot;</span>,[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>]<span class="kw">)</span>,<span class="kw">(</span><span class="st">&quot;3&quot;</span>,[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>]<span class="kw">)</span>,<span class="kw">(</span><span class="st">&quot;hi&quot;</span>,[<span class="st">&quot;hi&quot;</span>]<span class="kw">)</span>]</code></pre>
+<p>where <a href="../fls/exact-cover1.txt"><code>exact-cover1.txt</code></a> is</p>
+<pre><code>1 2 3 hi
+1 2 3
+hi</code></pre>
+<p>this shows that there are two ways to cover all the elements. We also have cases where there is no solution as in <a href="../fls/exact-cover2.txt"><code>exact-cover2.txt</code></a>:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">$</span> <span class="fu">./</span><span class="dt">ExactCover</span> <span class="fu">&lt;</span> exact<span class="fu">-</span>cover2<span class="fu">.</span>txt 
+problem<span class="fu">:</span>
+
+   <span class="dt">Elements</span><span class="fu">:</span> [<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;hi&quot;</span>,<span class="st">&quot;other&quot;</span>]
+
+   <span class="dt">Sets</span><span class="fu">:</span> [[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;hi&quot;</span>],[<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>],[<span class="st">&quot;hi&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;other&quot;</span>]]
+
+
+solutions<span class="fu">:</span>
+
+   <span class="dv">0</span> solutions</code></pre>
+<p>This happens because there is no “cover”</p>
+<p>The output should present the problem and the number of solutions. If there are solutions they should be listed (in no particular order). The number of solutions should be stated. I just used <code>show</code> on <code>Map</code> instances from <code>Data.Map</code> in order to actually display the solutions.</p>
+<p>We are going to keep the basic structure as with <code>sudoku.hs</code> from the lecture notes. This means that a cover for the set will be implemented using <code>Map</code> from <code>Data.Map</code>. There are two types then to define: the keys and the values. To answer the question it is useful to work via analogy. In the sudoku example there are positions, and then we map a value to a particular position. There is a natural mapping relationship in this lab as well. The map should completely specify an exact-cover solution if it is completely filled in. As such we declare the type for the solution <code>Map</code> to be <code>Cover</code>. A <code>Solver</code> type can be analogously defined as in the sudoku case for <code>Board</code>.</p>
+<p>Note that the objects we are covering are strings. Combine that with the proper definition of <code>Cover</code> and we have the basic type sets needed. To get a sense of this consider possible keys and values for <code>Cover</code>. A good design would mean that if every key has an assignment then the exact-cover problem should be solved and the values that are assigned should allow you to check the solution.</p>
+<p>Following the description from the lecture we next implement <code>extend</code>. Observe that with <code>extend</code> in the sudoku case we consider all viable values for the cell. We also want to check viability here. This gives us a hint about what <code>Map</code> to use for <code>Cover</code>. In particular, we may view the map as a set of assignments, in sudoku our keys are the positions and in exact cover the exercise is to figure out what the keys should be.</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
